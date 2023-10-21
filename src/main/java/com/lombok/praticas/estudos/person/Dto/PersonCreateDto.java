@@ -19,7 +19,7 @@ public record PersonCreateDto(
         String age,
 
         @NotBlank(message = "O campo CPF não deve está vazio")
-        @Size(min = 14, max = 14, message = "O campo CPF deve possuir apenas 11 dígitos")
+        @Size(min = 11, max = 11, message = "O campo CPF deve possuir apenas 11 dígitos")
         @Pattern(regexp = "\\d+", message = "O campo CPF deve conter apenas números")
         String cpf
 ) {
