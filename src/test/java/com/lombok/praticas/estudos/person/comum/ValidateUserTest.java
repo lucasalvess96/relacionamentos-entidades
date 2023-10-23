@@ -26,5 +26,4 @@ class ValidateUserTest {
         
         assertThrows(ErroRequest.class, () -> ValidateUser.validateUser(personCreateDto, personRepository));
     }
-
 }

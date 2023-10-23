@@ -27,5 +27,4 @@ class ValidateCpfUserTest {
         
         assertThrows(ErroRequest.class, () -> ValidateCpfUser.validateCpfUser(personCreateDto, personRepository));
     }
-
 }
