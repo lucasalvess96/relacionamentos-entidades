@@ -14,7 +14,7 @@ public record PersonCreateDto(
         String name,
 
         @NotBlank(message = "O campo IDADE não deve está vazio")        
-        @Size(min = 2, max = 2, message = "O campo IDADE deve possuir apenas 2 valores")
+        @Size(min = 2, max = 2, message = "O campo IDADE deve possuir apenas 2 dígitos")
         @Pattern(regexp = "\\d+", message = "O campo IDADE deve conter apenas números")
         String age,
 
