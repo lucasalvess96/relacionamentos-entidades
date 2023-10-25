@@ -1,5 +1,6 @@
 package com.lombok.praticas.estudos.person;
 
+import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -98,5 +99,33 @@ class PersonControllerTest {
         ResponseEntity<List<PersonCreateDto>> response = personController.list();
 
         assertEquals(personList, response.getBody());        
+    }
+
+    @Test
+    @DisplayName("Should update person information with valid ID")
+    void testUpdatePersonWithValidId() {
+        Long id = 1L;
+        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
+        
+        when(personService.personUpdate(any(Long.class), any(PersonCreateDto.class))).thenReturn(personCreateDto);
+
+        ResponseEntity<PersonCreateDto> response = personController.update(id, personCreateDto);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(personCreateDto.name(), Objects.requireNonNull(response.getBody()).name());
+        assertEquals(personCreateDto.age(), response.getBody().age());
+        assertEquals(personCreateDto.cpf(), response.getBody().cpf());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when ID is not found")
+    void testUpdatePersonWithInvalidId() {
+        Long id = 1L;
+        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
+
+        when(personService.personUpdate(any(Long.class), any(PersonCreateDto.class)))
+                .thenThrow(new ErroRequest("ID não encontrado"));
+
+        assertThrows(ErroRequest.class, () -> personController.update(id, personCreateDto));
     }
 }

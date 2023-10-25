@@ -42,4 +42,11 @@ public class PersonController {
     public ResponseEntity<List<PersonCreateDto>> list() {
         return ResponseEntity.ok().body(personService.personList());
     }
+    
+    @PutMapping("/update/{id}")
+    @Transactional
+    public ResponseEntity<PersonCreateDto> update(@PathVariable Long id, @RequestBody @Valid PersonCreateDto personCreateDto) {
+        PersonCreateDto personUpdate = personService.personUpdate(id, personCreateDto);
+        return ResponseEntity.ok().body(personUpdate);
+    }
 }

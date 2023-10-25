@@ -1,5 +1,6 @@
 package com.lombok.praticas.estudos.person;
 
+import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -123,4 +125,41 @@ class PersonServiceTest {
 
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    @DisplayName("Should update a person")
+    void testPersonUpdate() {
+        Long id = 1L;
+        PersonCreateDto personCreateDto = new PersonCreateDto(id, "John Doe", "30", "12345678912");
+
+        PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(id);
+        personEntity.setName("John Doe atualizado");
+        personEntity.setAge("34");
+        personEntity.setCpf("02345678977");
+
+        when(personRepository.findById(id)).thenReturn(Optional.of(personEntity));
+        when(personRepository.save(any(PersonEntity.class))).thenReturn(personEntity);
+
+        PersonCreateDto updatedPerson = personService.personUpdate(id, personCreateDto);
+
+        assertAll(() -> {
+            assertEquals(personCreateDto.id(), updatedPerson.id());
+            assertEquals(personCreateDto.name(), updatedPerson.name());
+            assertEquals(personCreateDto.age(), updatedPerson.age());
+            assertEquals(personCreateDto.cpf(), updatedPerson.cpf());
+        });
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when the ID is not found")
+    void testPersonUpdateNotFound() {
+        Long id = 1L;
+        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
+
+        when(personRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(ErroRequest.class, () -> personService.personUpdate(id, personCreateDto));
+    }
+    
 }

@@ -1,5 +1,6 @@
 package com.lombok.praticas.estudos.person;
 
+import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
 import com.lombok.praticas.estudos.person.comum.ValidateCpfUser;
 import com.lombok.praticas.estudos.person.comum.ValidateUser;
@@ -16,16 +17,10 @@ public record PersonService(PersonRepository personRepository) {
     public PersonCreateDto personCreate(PersonCreateDto personCreateDto) {
         ValidateUser.validateUser(personCreateDto, personRepository);
         ValidateCpfUser.validateCpfUser(personCreateDto, personRepository);
-        
-        PersonEntity person = new PersonEntity();
-        person.setId(personCreateDto.id());
-        person.setName(personCreateDto.name());
-        person.setAge(personCreateDto.age());
-        person.setCpf(personCreateDto.cpf());
-        
-        return new PersonCreateDto(personRepository.save(person));
+        PersonEntity personEntity = new PersonEntity();
+        return getPersonCreateDtoObject(personCreateDto, personEntity);
     }
-    
+
     public Page<PersonCreateDto> personListPagination(Pageable pageable) {
         Page<PersonEntity> personEntityPage = personRepository.findAll(pageable);
         return personEntityPage.map(PersonCreateDto::new);
@@ -36,5 +31,21 @@ public record PersonService(PersonRepository personRepository) {
         return personEntities.stream()
                 .map(PersonCreateDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public PersonCreateDto personUpdate(Long id, PersonCreateDto personCreateDto) {
+        PersonEntity personEntity = personRepository.findById(id).orElseThrow(() -> new ErroRequest("ID não encontrado"));
+        return getPersonCreateDtoObject(personCreateDto, personEntity);
+    }
+
+    public PersonCreateDto getPersonCreateDtoObject(PersonCreateDto personCreateDto, PersonEntity person) {
+        if(person == null) {
+            throw new NullPointerException("PersonEntity cannot be null");
+        }        
+        person.setName(personCreateDto.name());
+        person.setAge(personCreateDto.age());
+        person.setCpf(personCreateDto.cpf());
+
+        return new PersonCreateDto(personRepository.save(person));
     }
 }
