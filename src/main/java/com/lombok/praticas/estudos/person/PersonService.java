@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,8 +35,15 @@ public record PersonService(PersonRepository personRepository) {
     }
 
     public PersonCreateDto personUpdate(Long id, PersonCreateDto personCreateDto) {
-        PersonEntity personEntity = personRepository.findById(id).orElseThrow(() -> new ErroRequest("ID não encontrado"));
+        PersonEntity personEntity = personRepository.findById(id)
+                .orElseThrow(() -> new ErroRequest("ID não encontrado"));
         return getPersonCreateDtoObject(personCreateDto, personEntity);
+    }
+
+    public Optional<PersonCreateDto> detailPerson(Long id) {
+        Optional<PersonEntity> personEntity = personRepository.findById(id);
+        return personEntity.map(entity -> Optional.of(new PersonCreateDto(entity)))
+                .orElseThrow(() -> new ErroRequest("Usuário não encontrado"));
     }
 
     public PersonCreateDto getPersonCreateDtoObject(PersonCreateDto personCreateDto, PersonEntity person) {

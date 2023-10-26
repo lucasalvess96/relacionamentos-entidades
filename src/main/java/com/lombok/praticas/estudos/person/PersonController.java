@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("person")
@@ -48,5 +49,12 @@ public class PersonController {
     public ResponseEntity<PersonCreateDto> update(@PathVariable Long id, @RequestBody @Valid PersonCreateDto personCreateDto) {
         PersonCreateDto personUpdate = personService.personUpdate(id, personCreateDto);
         return ResponseEntity.ok().body(personUpdate);
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<PersonCreateDto> detail(@PathVariable @Valid Long id) {
+        Optional<PersonCreateDto> personDetailDto = personService.detailPerson(id);
+        return personDetailDto.map(detailDto -> ResponseEntity.ok().body(detailDto))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

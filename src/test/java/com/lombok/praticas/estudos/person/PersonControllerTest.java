@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -127,5 +128,29 @@ class PersonControllerTest {
                 .thenThrow(new ErroRequest("ID não encontrado"));
 
         assertThrows(ErroRequest.class, () -> personController.update(id, personCreateDto));
+    }
+
+    @Test
+    @DisplayName("Should return 200 OK with valid ID")
+    void testDetailWithValidId() {
+        Long id = 1L;
+        PersonCreateDto personDetail = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
+        when(personService.detailPerson(id)).thenReturn(Optional.of(personDetail));
+
+        ResponseEntity<PersonCreateDto> response = personController.detail(id);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(personDetail, response.getBody());
+    }
+
+    @Test
+    @DisplayName("Should return 404 Not Found with invalid ID")
+    void testDetailWithInvalidId() {
+        Long id = 2L;
+        when(personService.detailPerson(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<PersonCreateDto> response = personController.detail(id);
+
+        assertEquals(404, response.getStatusCode().value());
     }
 }

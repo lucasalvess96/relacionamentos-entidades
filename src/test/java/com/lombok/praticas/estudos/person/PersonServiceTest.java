@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -162,4 +163,30 @@ class PersonServiceTest {
         assertThrows(ErroRequest.class, () -> personService.personUpdate(id, personCreateDto));
     }
     
+    @Test
+    @DisplayName("Should return PersonCreateDto object for a valid ID")
+    void testDetailPersonWithValidId() {
+        Long id = 1L;
+        PersonEntity personEntity = new PersonEntity(1L, "John Doe", "30", "123456789");
+        Optional<PersonEntity> optionalPersonEntity = Optional.of(personEntity);
+
+        when(personRepository.findById(id)).thenReturn(optionalPersonEntity);
+
+        Optional<PersonCreateDto> result = personService.detailPerson(id);
+
+        assertTrue(result.isPresent());
+        assertEquals("John Doe", result.get().name());
+        assertEquals("30", result.get().age());
+        assertEquals("123456789", result.get().cpf());
+    }
+
+    @Test
+    @DisplayName("Should throw ErroRequest for an invalid ID")
+    void testDetailPersonWithInvalidId() {
+        Long id = 2L;
+        when(personRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ErroRequest.class, () -> personService.detailPerson(id));
+        assertEquals("Usuário não encontrado", exception.getMessage());
+    }
 }
