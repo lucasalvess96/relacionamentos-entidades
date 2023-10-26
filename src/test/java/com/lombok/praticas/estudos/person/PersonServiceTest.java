@@ -2,6 +2,7 @@ package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
+import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -188,5 +189,71 @@ class PersonServiceTest {
 
         Exception exception = assertThrows(ErroRequest.class, () -> personService.detailPerson(id));
         assertEquals("Usuário não encontrado", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should search person pagination")
+    void testSearchPersonPagination() {
+        Pageable pageable = Pageable.unpaged();
+        String name = "John";
+
+        PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(1L);
+        personEntity.setName("John Doe");
+
+        Page<PersonEntity> personEntityPage = new PageImpl<>(Collections.singletonList(personEntity));
+
+        when(personRepository.findByNameContainingIgnoreCase(any(String.class), any(Pageable.class)))
+                .thenReturn(personEntityPage);
+
+        Page<PersonSearchDto> result = personService.searchPersonPagination(name, pageable);
+
+        assertEquals(1, result.getContent().size());
+        assertEquals("John Doe", result.getContent().get(0).name());
+    }
+
+    @Test
+    @DisplayName("Should not find search result")
+    void testSearchPersonNotFound() {
+        Pageable pageable = Pageable.unpaged();
+        String name = "Jane";
+
+        when(personRepository.findByNameContainingIgnoreCase(any(String.class), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        Page<PersonSearchDto> result = personService.searchPersonPagination(name, pageable);
+
+        assertEquals(0, result.getContent().size());
+    }
+
+    @Test
+    @DisplayName("Should search list of persons")
+    void testSearchListPerson() {
+        String name = "John";
+
+        PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(1L);
+        personEntity.setName("John Doe");
+
+        List<PersonEntity> personEntities = Collections.singletonList(personEntity);
+
+        when(personRepository.findByNameContainingIgnoreCase(any(String.class))).thenReturn(personEntities);
+
+        List<PersonSearchDto> result = personService.searchListPerson(name);
+
+        assertEquals(1, result.size());
+        assertEquals("John Doe", result.get(0).name());
+    }
+
+    @Test
+    @DisplayName("Should handle empty search result")
+    void testSearchListPersonWithEmptyResult() {
+        String name = "Jane";
+
+        when(personRepository.findByNameContainingIgnoreCase(any(String.class))).thenReturn(Collections.emptyList());
+
+        List<PersonSearchDto> result = personService.searchListPerson(name);
+
+        assertEquals(0, result.size());
     }
 }

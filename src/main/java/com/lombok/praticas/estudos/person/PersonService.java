@@ -2,6 +2,7 @@ package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
+import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import com.lombok.praticas.estudos.person.comum.ValidateCpfUser;
 import com.lombok.praticas.estudos.person.comum.ValidateUser;
 import org.springframework.data.domain.Page;
@@ -44,6 +45,18 @@ public record PersonService(PersonRepository personRepository) {
         Optional<PersonEntity> personEntity = personRepository.findById(id);
         return personEntity.map(entity -> Optional.of(new PersonCreateDto(entity)))
                 .orElseThrow(() -> new ErroRequest("Usuário não encontrado"));
+    }
+
+    public Page<PersonSearchDto> searchPersonPagination(String name, Pageable pageable) {
+        Page<PersonEntity> personEntityPage = personRepository.findByNameContainingIgnoreCase(name, pageable);
+        return personEntityPage.map(personEntity -> new PersonSearchDto(personEntity.getName()));
+    }
+
+    public List<PersonSearchDto> searchListPerson(String name) {
+        List<PersonEntity> personEntities = personRepository.findByNameContainingIgnoreCase(name);
+        return personEntities.stream()
+                .map(personEntity -> new PersonSearchDto(personEntity.getName()))
+                .collect(Collectors.toList());
     }
 
     public PersonCreateDto getPersonCreateDtoObject(PersonCreateDto personCreateDto, PersonEntity person) {

@@ -2,6 +2,7 @@ package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
+import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
@@ -152,5 +155,41 @@ class PersonControllerTest {
         ResponseEntity<PersonCreateDto> response = personController.detail(id);
 
         assertEquals(404, response.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Should return paginated search results")
+    void testPagedSearch() {
+        String name = "John";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        PersonSearchDto personSearchDto = new PersonSearchDto("John Doe");
+        List<PersonSearchDto> personSearchDtos = Collections.singletonList(personSearchDto);
+        Page<PersonSearchDto> personSearchDtoPage = new PageImpl<>(personSearchDtos);
+
+        when(personService.searchPersonPagination(any(String.class), any(Pageable.class))).thenReturn(personSearchDtoPage);
+
+        ResponseEntity<Page<PersonSearchDto>> response = personController.pagedSearch(name, pageable);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, Objects.requireNonNull(response.getBody()).getContent().size());
+        assertEquals("John Doe", response.getBody().getContent().get(0).name());
+    }
+
+    @Test
+    @DisplayName("Should return list search results")
+    void testSearchList() {
+        String name = "John";
+
+        PersonSearchDto personSearchDto = new PersonSearchDto("John Doe");
+        List<PersonSearchDto> personSearchDtos = Collections.singletonList(personSearchDto);
+
+        when(personService.searchListPerson(any(String.class))).thenReturn(personSearchDtos);
+
+        ResponseEntity<List<PersonSearchDto>> response = personController.searchList(name);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
+        assertEquals("John Doe", response.getBody().get(0).name());
     }
 }

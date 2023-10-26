@@ -1,6 +1,7 @@
 package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
+import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +57,17 @@ public class PersonController {
         Optional<PersonCreateDto> personDetailDto = personService.detailPerson(id);
         return personDetailDto.map(detailDto -> ResponseEntity.ok().body(detailDto))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search/pagination")
+    public ResponseEntity<Page<PersonSearchDto>> pagedSearch(@RequestParam String name, Pageable pageable) {
+        Page<PersonSearchDto> personSearchDtos = personService.searchPersonPagination(name, pageable);
+        return ResponseEntity.ok().body(personSearchDtos);
+    }
+
+    @GetMapping("/search/searchList")
+    public ResponseEntity<List<PersonSearchDto>> searchList(@RequestParam String name) {
+        List<PersonSearchDto> personSearchDtos = personService.searchListPerson(name);
+        return ResponseEntity.ok().body(personSearchDtos);
     }
 }
