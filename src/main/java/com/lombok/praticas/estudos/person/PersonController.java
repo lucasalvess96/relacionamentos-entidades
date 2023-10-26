@@ -70,4 +70,10 @@ public class PersonController {
         List<PersonSearchDto> personSearchDtos = personService.searchListPerson(name);
         return ResponseEntity.ok().body(personSearchDtos);
     }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<PersonEntity> delete(@PathVariable Long id) {
+        personService.deletePerson(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -191,5 +192,16 @@ class PersonControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, Objects.requireNonNull(response.getBody()).size());
         assertEquals("John Doe", response.getBody().get(0).name());
+    }
+
+    @Test
+    @DisplayName("Should delete person with valid ID")
+    void testDeletePersonWithValidId() {
+        Long id = 1L;
+        doNothing().when(personService).deletePerson(any(Long.class));
+
+        ResponseEntity<PersonEntity> response = personController.delete(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

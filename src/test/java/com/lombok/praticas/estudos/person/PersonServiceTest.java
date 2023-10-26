@@ -256,4 +256,22 @@ class PersonServiceTest {
 
         assertEquals(0, result.size());
     }
+
+    @Test
+    @DisplayName("Should delete person with valid ID")
+    void testDeletePersonWithValidId() {
+        Long id = 1L;
+        when(personRepository.existsById(id)).thenReturn(true);
+
+        assertDoesNotThrow(() -> personService.deletePerson(id));
+    }
+
+    @Test
+    @DisplayName("Should throw error for non-existent ID")
+    void testDeletePersonWithInvalidId() {
+        Long id = 2L;
+        when(personRepository.existsById(id)).thenReturn(false);
+
+        assertThrows(ErroRequest.class, () -> personService.deletePerson(id));
+    }
 }

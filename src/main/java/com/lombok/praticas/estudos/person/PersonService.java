@@ -59,6 +59,14 @@ public record PersonService(PersonRepository personRepository) {
                 .collect(Collectors.toList());
     }
 
+    public void deletePerson(Long id) {
+        if (personRepository.existsById(id)) {
+            personRepository.deleteById(id);
+        } else {
+            throw new ErroRequest("Recurso não encontrado");
+        }
+    }
+
     public PersonCreateDto getPersonCreateDtoObject(PersonCreateDto personCreateDto, PersonEntity person) {
         if(person == null) {
             throw new NullPointerException("PersonEntity cannot be null");
