@@ -65,7 +65,7 @@ public class PersonController {
         return ResponseEntity.ok().body(personSearchDtos);
     }
 
-    @GetMapping("/search/searchList")
+    @GetMapping("/search/list")
     public ResponseEntity<List<PersonSearchDto>> searchList(@RequestParam String name) {
         List<PersonSearchDto> personSearchDtos = personService.searchListPerson(name);
         return ResponseEntity.ok().body(personSearchDtos);
@@ -74,6 +74,6 @@ public class PersonController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<PersonEntity> delete(@PathVariable Long id) {
         personService.deletePerson(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
