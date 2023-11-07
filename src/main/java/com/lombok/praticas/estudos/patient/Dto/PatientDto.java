@@ -1,7 +1,8 @@
-package com.lombok.praticas.estudos.patient;
+package com.lombok.praticas.estudos.patient.Dto;
 
 import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationEntity;
 import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationDto;
+import com.lombok.praticas.estudos.patient.PatientEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -44,7 +45,8 @@ public record PatientDto(
 
     private static List<PatientConsultationDto> convertToPatientConsultationDtos(List<PatientConsultationEntity> patientConsultationList) {
         return patientConsultationList.stream()
-                .map(patientConsultation -> new PatientConsultationDto(patientConsultation.getReason()))
+                .map(patientConsultation -> new PatientConsultationDto(patientConsultation.getId(),
+                        patientConsultation.getReason()))
                 .collect(Collectors.toList());
     }
 }
