@@ -8,40 +8,42 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PatientService {
-    
+
     private final PatientRepository patientRepository;
 
     public PatientService(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
-    
+
     public PatientDto patientCreate(PatientDto patientDto) {
         PatientEntity patientEntity = new PatientEntity();
         return mapPatientDtoToEntity(patientDto, patientEntity);
     }
-    
+
     public Page<PatientDto> patientPagination(Pageable pageable) {
         Page<PatientEntity> patientEntities = patientRepository.findAll(pageable);
         return patientEntities.map(PatientDto::new);
     }
-    
+
     public List<PatientDto> patientList() {
         List<PatientEntity> patientEntityList = patientRepository.findAll();
-        return patientEntityList.stream().map(PatientDto::new).collect(Collectors.toList());
+        return patientEntityList.stream()
+                .map(PatientDto::new)
+                .collect(Collectors.toList());
     }
-    
+
     public PatientDto patientUpdate(Long id, PatientDto patientDto) {
         PatientEntity patientEntity = patientRepository.findById(id)
-                .orElseThrow(() -> new ErroRequest("ID não encontrado"));
+                .orElseThrow(() -> new ErroRequest("usuário não encontrado"));
         return mapPatientDtoToEntity(patientDto, patientEntity);
     }
+
 
     public Optional<PatientDto> patientDetail(Long id) {
         Optional<PatientEntity> patientEntity = patientRepository.findById(id);
@@ -74,16 +76,19 @@ public class PatientService {
         patientEntity.setAge(patientDto.age());
         patientEntity.setCpf(patientDto.cpf());
 
-        List<PatientConsultationEntity> patientConsultationList = new ArrayList<>();
+        List<PatientConsultationEntity> patientConsultationList = patientEntity.getPatientConsultationList();
         if (patientDto.patientConsultationDto() != null) {
-            patientConsultationList = patientDto.patientConsultationDto().stream().map(dto -> {
-                PatientConsultationEntity patientConsultation = new PatientConsultationEntity();
-                patientConsultation.setReason(dto.reason());
-                patientConsultation.setPatient(patientEntity);
-                return patientConsultation;
-            }).collect(Collectors.toList());
-        }        
-        patientEntity.setPatientConsultationList(patientConsultationList);
+            patientConsultationList.addAll(patientDto.patientConsultationDto()
+                    .stream()
+                    .map(dto -> {
+                        PatientConsultationEntity patientConsultation = new PatientConsultationEntity();
+                        patientConsultation.setId(dto.id());
+                        patientConsultation.setReason(dto.reason());
+                        patientConsultation.setPatient(patientEntity);
+                        return patientConsultation;
+                    })
+                    .toList());
+        }
         return new PatientDto(patientRepository.save(patientEntity));
     }
 }

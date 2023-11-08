@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,15 +29,16 @@ public class PatientEntity {
 
     private String cpf;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PatientConsultationEntity> patientConsultationList;
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PatientConsultationEntity> patientConsultationList = new ArrayList<>();
+    ;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PatientEntity patient)) return false;
-        return Objects.equals(getId(), patient.getId()) && Objects.equals(getName(), patient.getName()) 
-                && Objects.equals(getAge(), patient.getAge()) && Objects.equals(getCpf(), patient.getCpf()) 
+        return Objects.equals(getId(), patient.getId()) && Objects.equals(getName(), patient.getName())
+                && Objects.equals(getAge(), patient.getAge()) && Objects.equals(getCpf(), patient.getCpf())
                 && Objects.equals(getPatientConsultationList(), patient.getPatientConsultationList());
     }
 
@@ -47,7 +49,7 @@ public class PatientEntity {
 
     @Override
     public String toString() {
-        return "PatientEntity{" + "id=" + id + ", name='" + name + '\'' + ", age='" + age + '\'' 
+        return "PatientEntity{" + "id=" + id + ", name='" + name + '\'' + ", age='" + age + '\''
                 + ", cpf='" + cpf + '\'' + ", patientConsultationList=" + patientConsultationList + '}';
     }
 }

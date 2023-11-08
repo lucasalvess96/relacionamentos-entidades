@@ -15,30 +15,36 @@ import java.util.stream.Collectors;
 public class HandleErro {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroMessage> handleMethodValidation(MethodArgumentNotValidException notValidException, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ErroMessage> handleMethodValidation(MethodArgumentNotValidException notValidException,
+                                                              HttpServletRequest httpServletRequest) {
         ErroMessage erroMessage = new ErroMessage();
         erroMessage.setTimestamp(LocalDateTime.now());
         erroMessage.setStatus(HttpStatus.BAD_REQUEST.value());
         erroMessage.setError("Ocorreu erro ao salvar informações, verifique seus campos de preenchimentos");
         erroMessage.setPath(httpServletRequest.getRequestURI());
-        erroMessage.setMessage(notValidException.getBindingResult().getAllErrors()
+        erroMessage.setMessage(notValidException.getBindingResult()
+                .getAllErrors()
                 .stream()
                 .map(err -> err.unwrap(ConstraintViolation.class))
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", ")));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erroMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(erroMessage);
     }
 
     @ExceptionHandler(ErroRequest.class)
-    public ResponseEntity<ErroMessage> entityNotFoundException(ErroRequest errorRequest, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ErroMessage> entityNotFoundException(ErroRequest errorRequest,
+                                                               HttpServletRequest httpServletRequest) {
         ErroMessage erroMessage = new ErroMessage();
         erroMessage.setTimestamp(LocalDateTime.now());
         erroMessage.setStatus(HttpStatus.NOT_FOUND.value());
         erroMessage.setError("Recurso não encontrado");
         erroMessage.setPath(httpServletRequest.getRequestURI());
-        if (errorRequest.getMessage() != null && !errorRequest.getMessage().isEmpty()) {
+        if (errorRequest.getMessage() != null && !errorRequest.getMessage()
+                .isEmpty()) {
             erroMessage.setMessage(errorRequest.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erroMessage);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(erroMessage);
     }
 }

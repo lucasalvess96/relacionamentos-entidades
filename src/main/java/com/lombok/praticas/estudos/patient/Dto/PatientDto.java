@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.patient.Dto;
 
-import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationEntity;
 import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationDto;
+import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationEntity;
 import com.lombok.praticas.estudos.patient.PatientEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record PatientDto(
-        
+
         Long id,
 
         @NotBlank(message = "O campo NOME não deve está vazio")
@@ -28,16 +28,16 @@ public record PatientDto(
         @Size(min = 11, max = 11, message = "O campo CPF deve possuir apenas 11 dígitos")
         @Pattern(regexp = "\\d+", message = "O campo CPF deve conter apenas números")
         String cpf,
-        
+
         @Valid
         List<PatientConsultationDto> patientConsultationDto
 ) {
-    
+
     public PatientDto(PatientEntity patient) {
         this(
-                patient.getId(), 
-                patient.getName(), 
-                patient.getAge(), 
+                patient.getId(),
+                patient.getName(),
+                patient.getAge(),
                 patient.getCpf(),
                 convertToPatientConsultationDtos(patient.getPatientConsultationList())
         );
