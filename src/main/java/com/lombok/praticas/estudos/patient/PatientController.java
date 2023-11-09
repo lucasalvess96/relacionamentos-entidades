@@ -2,6 +2,9 @@ package com.lombok.praticas.estudos.patient;
 
 import com.lombok.praticas.estudos.patient.Dto.PatientDto;
 import com.lombok.praticas.estudos.patient.Dto.PatientSearchDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,11 @@ public class PatientController {
         this.patientService = patientService;
     }
 
+    @Operation(summary = "Criar uma nova pessoa",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Pessoa criada com sucesso"),
+                    @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content)
+            })
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<PatientDto> create(@RequestBody @Valid PatientDto patientDto) {
@@ -47,6 +55,11 @@ public class PatientController {
                 .body(patientService.patientList());
     }
 
+    @Operation(summary = "Obter detalhes de uma pessoa pelo ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Detalhes da pessoa encontrados"),
+                    @ApiResponse(responseCode = "404", description = "Pessoa não encontrada", content = @Content)
+            })
     @PutMapping("/update/{id}")
     @Transactional
     public ResponseEntity<PatientDto> update(@PathVariable Long id, @RequestBody @Valid PatientDto patientDto) {
