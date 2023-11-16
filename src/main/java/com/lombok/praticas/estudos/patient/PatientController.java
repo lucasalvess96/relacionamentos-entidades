@@ -55,11 +55,6 @@ public class PatientController {
                 .body(patientService.patientList());
     }
 
-    @Operation(summary = "Obter detalhes de uma pessoa pelo ID",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Detalhes da pessoa encontrados"),
-                    @ApiResponse(responseCode = "404", description = "Pessoa não encontrada", content = @Content)
-            })
     @PutMapping("/update/{id}")
     @Transactional
     public ResponseEntity<PatientDto> update(@PathVariable Long id, @RequestBody @Valid PatientDto patientDto) {
@@ -68,6 +63,11 @@ public class PatientController {
                 .body(patientUpdate);
     }
 
+    @Operation(summary = "Obter detalhes de uma pessoa pelo ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Detalhes da pessoa encontrados"),
+                    @ApiResponse(responseCode = "404", description = "Pessoa não encontrada", content = @Content)
+            })
     @GetMapping("/detail/{id}")
     public ResponseEntity<PatientDto> detail(@PathVariable @Valid Long id) {
         Optional<PatientDto> patientDetailDto = patientService.patientDetail(id);
