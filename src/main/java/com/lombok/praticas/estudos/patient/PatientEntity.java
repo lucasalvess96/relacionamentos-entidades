@@ -31,7 +31,7 @@ public class PatientEntity {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PatientConsultationEntity> patientConsultationList = new ArrayList<>();
-    ;
+    
 
     @Override
     public boolean equals(Object o) {
