@@ -1,11 +1,11 @@
 package com.lombok.praticas.estudos.student.Dto;
 
-import com.lombok.praticas.estudos.course.CourserEntity;
 import com.lombok.praticas.estudos.course.Dto.CourseCreateDto;
 import com.lombok.praticas.estudos.student.StudentEntity;
 
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.lombok.praticas.estudos.student.comum.convert.convertEntityToDto;
 
 public record StudenCreateDto(Long id, String name, String age, Set<CourseCreateDto> courseCreateDto) {
 
@@ -14,13 +14,7 @@ public record StudenCreateDto(Long id, String name, String age, Set<CourseCreate
                 student.getId(),
                 student.getName(),
                 student.getAge(),
-                convertToCreateDto(student.getCourses())
+                convertEntityToDto(student.getCourses())
         );
-    }
-
-    private static Set<CourseCreateDto> convertToCreateDto(Set<CourserEntity> courses) {
-        return courses.stream()
-                .map(courserEntity -> new CourseCreateDto(courserEntity.getId(), courserEntity.getName()))
-                .collect(Collectors.toSet());
     }
 }

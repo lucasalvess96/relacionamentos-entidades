@@ -26,7 +26,8 @@ public class StudentEntity {
 
     private String age;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH})
     @JoinTable(
             name = "student_course",
             joinColumns = @JoinColumn(name = "student_id"),
