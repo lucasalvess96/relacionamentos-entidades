@@ -1,6 +1,6 @@
 package com.lombok.praticas.estudos.address;
 
-import com.lombok.praticas.estudos.person.PersonEntity;
+import com.lombok.praticas.estudos.persoon.Person;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,30 +26,19 @@ public class AddressEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", unique = true)
-    private PersonEntity person;
+    private Person person;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AddressEntity that)) return false;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getStreet(), that.getStreet())
-                && Objects.equals(getNumber(), that.getNumber()) && Objects.equals(getCity(), that.getCity())
-                && Objects.equals(getPerson(), that.getPerson());
+                && Objects.equals(getNumber(), that.getNumber()) && Objects.equals(getCity(),
+                that.getCity()) && Objects.equals(getPerson(), that.getPerson());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getStreet(), getNumber(), getCity(), getPerson());
-    }
-
-    @Override
-    public String toString() {
-        return "AddressEntity{" +
-                "id=" + id +
-                ", street='" + street + '\'' +
-                ", number=" + number +
-                ", city='" + city + '\'' +
-                ", person=" + person +
-                '}';
     }
 }
