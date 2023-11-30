@@ -22,7 +22,8 @@ public class Person {
     private String name;
     private String cpf;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "address_id_fk", referencedColumnName = "address_id", nullable = false, unique = true)
     private AddressEntity address;
 
     @Override

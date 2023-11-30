@@ -17,15 +17,14 @@ import java.util.Objects;
 public class AddressEntity {
 
     @Id
-    @Column(name = "address_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id")
     private Long id;
     private String street;
     private Long number;
     private String city;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", unique = true)
+    @OneToOne(mappedBy = "address")
     private Person person;
 
     @Override
