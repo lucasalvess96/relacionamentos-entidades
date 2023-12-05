@@ -73,11 +73,14 @@ public record PersoonService(PersoonRepository persoonRepository, AddressReposit
         AddressEntity addressEntity = personEntity.getAddress();
         if (addressEntity == null) {
             addressEntity = new AddressEntity();
+            personEntity.setAddress(addressEntity);
         }
-        addressEntity.setId(addressDto.id());
-        addressEntity.setStreet(addressDto.street());
-        addressEntity.setNumber(addressDto.number());
-        addressEntity.setCity(addressDto.city());
+        if (addressDto != null) {
+            addressEntity.setId(addressDto.id());
+            addressEntity.setStreet(addressDto.street());
+            addressEntity.setNumber(addressDto.number());
+            addressEntity.setCity(addressDto.city());
+        }
         personEntity.setAddress(addressRepository.save(addressEntity));
         return new PersonDto(persoonRepository.save(personEntity));
     }

@@ -1,9 +1,7 @@
 package com.lombok.praticas.estudos.address;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-@Service
-public interface AddressRepository extends JpaRepository<AddressEntity, Long> {
-
-}
+@Repository
+public interface AddressRepository extends JpaRepository<AddressEntity, Long> {}
