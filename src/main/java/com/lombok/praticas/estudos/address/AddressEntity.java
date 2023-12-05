@@ -40,4 +40,15 @@ public class AddressEntity {
     public int hashCode() {
         return Objects.hash(getId(), getStreet(), getNumber(), getCity(), getPerson());
     }
+
+    @Override
+    public String toString() {
+        return "AddressEntity{" +
+                "id=" + id +
+                ", street='" + street + '\'' +
+                ", number=" + number +
+                ", city='" + city + '\'' +
+                ", person=" + person +
+                '}';
+    }
 }
