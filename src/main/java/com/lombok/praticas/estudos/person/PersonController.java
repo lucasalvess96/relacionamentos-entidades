@@ -4,7 +4,6 @@ import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
 import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,60 +19,61 @@ import java.util.Optional;
 @RequestMapping("person")
 @CrossOrigin
 public class PersonController {
-    
+
     private final PersonService personService;
-    
-    @Autowired
+
     public PersonController(PersonService personService) {
         this.personService = personService;
     }
-    
+
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<PersonCreateDto> create(@RequestBody @Valid PersonCreateDto personCreateDto) {
         PersonCreateDto createDto = personService.personCreate(personCreateDto);
-        return ResponseEntity.created(URI.create("/create/" + createDto.id())).body(createDto);
-    }
-    
-    @GetMapping("/pagination")
-    public ResponseEntity<Page<PersonCreateDto>> list(@PageableDefault(direction = Sort.Direction.ASC)Pageable pageable) {
-        return ResponseEntity.ok().body(personService.personListPagination(pageable));    
+        return ResponseEntity.created(URI.create("/create/" + createDto.id()))
+                .body(createDto);
     }
 
-    @GetMapping("list")
-    public ResponseEntity<List<PersonCreateDto>> list() {
-        return ResponseEntity.ok().body(personService.personList());
+    @GetMapping("/pagination")
+    public ResponseEntity<Page<PersonCreateDto>> list(@PageableDefault(direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(personService.personListPagination(pageable));
     }
-    
+
+    @GetMapping("/list")
+    public ResponseEntity<List<PersonCreateDto>> list() {
+        return ResponseEntity.ok(personService.personList());
+    }
+
     @PutMapping("/update/{id}")
     @Transactional
-    public ResponseEntity<PersonCreateDto> update(@PathVariable Long id, @RequestBody @Valid PersonCreateDto personCreateDto) {
-        PersonCreateDto personUpdate = personService.personUpdate(id, personCreateDto);
-        return ResponseEntity.ok().body(personUpdate);
+    public ResponseEntity<PersonCreateDto> update(@PathVariable Long id,
+                                                  @RequestBody @Valid PersonCreateDto personCreateDto) {
+        return ResponseEntity.ok(personService.personUpdate(id, personCreateDto));
     }
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<PersonCreateDto> detail(@PathVariable @Valid Long id) {
         Optional<PersonCreateDto> personDetailDto = personService.detailPerson(id);
-        return personDetailDto.map(detailDto -> ResponseEntity.ok().body(detailDto))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return personDetailDto.map(detailDto -> ResponseEntity.ok()
+                        .body(detailDto))
+                .orElseGet(() -> ResponseEntity.notFound()
+                        .build());
     }
 
     @GetMapping("/search/pagination")
     public ResponseEntity<Page<PersonSearchDto>> pagedSearch(@RequestParam String name, Pageable pageable) {
-        Page<PersonSearchDto> personSearchDtos = personService.searchPersonPagination(name, pageable);
-        return ResponseEntity.ok().body(personSearchDtos);
+        return ResponseEntity.ok(personService.searchPersonPagination(name, pageable));
     }
 
     @GetMapping("/search/list")
     public ResponseEntity<List<PersonSearchDto>> searchList(@RequestParam String name) {
-        List<PersonSearchDto> personSearchDtos = personService.searchListPerson(name);
-        return ResponseEntity.ok().body(personSearchDtos);
+        return ResponseEntity.ok(personService.searchListPerson(name));
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<PersonEntity> delete(@PathVariable Long id) {
         personService.deletePerson(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 }

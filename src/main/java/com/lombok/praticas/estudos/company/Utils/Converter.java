@@ -6,17 +6,14 @@ import com.lombok.praticas.estudos.contactPerson.ContactPersonEntity;
 public class Converter {
 
     public static ContactPersonDto convertEntityToDto(ContactPersonEntity contactPersonEntity) {
-        if (contactPersonEntity != null) {
+        if (contactPersonEntity != null)
             return new ContactPersonDto(contactPersonEntity.getFirstName(), contactPersonEntity.getLastName());
-        }
         return null;
     }
 
     public static ContactPersonEntity convertDtoToEntity(ContactPersonDto contactPersonDto) {
-        if (contactPersonDto != null) {
+        if (contactPersonDto != null)
             return new ContactPersonEntity(contactPersonDto.firstName(), contactPersonDto.lastName());
-        } else {
-            return null;
-        }
+        return null;
     }
 }

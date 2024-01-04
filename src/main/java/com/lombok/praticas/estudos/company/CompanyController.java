@@ -19,8 +19,7 @@ public class CompanyController {
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<CompanyDto> create(@RequestBody @Valid CompanyDto companyDto) {
-        CompanyDto companyCreate = companyService.companyCreate(companyDto);
         return ResponseEntity.created(URI.create("/create" + companyDto.id()))
-                .body(companyCreate);
+                .body(companyService.companyCreate(companyDto));
     }
 }

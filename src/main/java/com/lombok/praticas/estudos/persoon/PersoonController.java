@@ -36,22 +36,18 @@ public class PersoonController {
 
     @GetMapping("/list")
     public ResponseEntity<List<PersonDto>> list() {
-        return ResponseEntity.ok()
-                .body(persoonService.personList());
+        return ResponseEntity.ok(persoonService.personList());
     }
 
     @GetMapping("/pagination")
     public ResponseEntity<Page<PersonDto>> pagination(@PageableDefault(direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok()
-                .body(persoonService.personPage(pageable));
+        return ResponseEntity.ok(persoonService.personPage(pageable));
     }
 
     @PutMapping("/update/{id}")
     @Transactional
     public ResponseEntity<PersonDto> update(@PathVariable Long id, @RequestBody @Valid PersonDto personDto) {
-        PersonDto personUpdate = persoonService.personUpdate(id, personDto);
-        return ResponseEntity.ok()
-                .body(personUpdate);
+        return ResponseEntity.ok(persoonService.personUpdate(id, personDto));
     }
 
     @GetMapping("/detail/{id}")
@@ -65,16 +61,12 @@ public class PersoonController {
 
     @GetMapping("/search/pagination")
     public ResponseEntity<Page<PersonSearchDto>> pagedSearch(@RequestParam String name, Pageable pageable) {
-        Page<PersonSearchDto> personSearchDtos = persoonService.searchPersonPagination(name, pageable);
-        return ResponseEntity.ok()
-                .body(personSearchDtos);
+        return ResponseEntity.ok(persoonService.searchPersonPagination(name, pageable));
     }
 
     @GetMapping("/search/list")
     public ResponseEntity<List<PersonSearchDto>> searchList(@RequestParam String name) {
-        List<PersonSearchDto> personSearchDtos = persoonService.searchListPerson(name);
-        return ResponseEntity.ok()
-                .body(personSearchDtos);
+        return ResponseEntity.ok(persoonService.searchListPerson(name));
     }
 
     @DeleteMapping("delete/{id}")

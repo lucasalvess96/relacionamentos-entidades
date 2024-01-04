@@ -39,28 +39,24 @@ public class PatientController {
     public ResponseEntity<PatientDto> create(@RequestBody @Valid PatientDto patientDto) {
         PatientDto patientCreate = patientService.patientCreate(patientDto);
         return ResponseEntity.created(URI.create("/create/" + patientCreate.id()))
-                .body(patientCreate);
+                .body(patientService.patientCreate(patientDto));
     }
 
     @GetMapping("/pagination")
     public ResponseEntity<Page<PatientDto>> patientPagination(@PageableDefault(direction = Sort.Direction.DESC)
                                                               Pageable pageable) {
-        return ResponseEntity.ok()
-                .body(patientService.patientPagination(pageable));
+        return ResponseEntity.ok(patientService.patientPagination(pageable));
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<PatientDto>> patientList() {
-        return ResponseEntity.ok()
-                .body(patientService.patientList());
+        return ResponseEntity.ok(patientService.patientList());
     }
 
     @PutMapping("/update/{id}")
     @Transactional
     public ResponseEntity<PatientDto> update(@PathVariable Long id, @RequestBody @Valid PatientDto patientDto) {
-        PatientDto patientUpdate = patientService.patientUpdate(id, patientDto);
-        return ResponseEntity.ok()
-                .body(patientUpdate);
+        return ResponseEntity.ok(patientService.patientUpdate(id, patientDto));
     }
 
     @Operation(summary = "Obter detalhes de uma pessoa pelo ID",
@@ -79,16 +75,12 @@ public class PatientController {
 
     @GetMapping("/search/pagination")
     public ResponseEntity<Page<PatientSearchDto>> pagedSearch(@RequestParam String name, Pageable pageable) {
-        Page<PatientSearchDto> personSearchDtos = patientService.searchPatientPagination(name, pageable);
-        return ResponseEntity.ok()
-                .body(personSearchDtos);
+        return ResponseEntity.ok(patientService.searchPatientPagination(name, pageable));
     }
 
     @GetMapping("/search/list")
     public ResponseEntity<List<PatientSearchDto>> searchList(@RequestParam String name) {
-        List<PatientSearchDto> personSearchDtos = patientService.searchListPerson(name);
-        return ResponseEntity.ok()
-                .body(personSearchDtos);
+        return ResponseEntity.ok(patientService.searchListPerson(name));
     }
 
     @DeleteMapping("delete/{id}")
