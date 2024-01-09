@@ -1,5 +1,6 @@
-package com.lombok.praticas.estudos.company;
+package com.lombok.praticas.estudos.company.Dto;
 
+import com.lombok.praticas.estudos.company.Company;
 import com.lombok.praticas.estudos.contactPerson.ContactPersonDto;
 
 import static com.lombok.praticas.estudos.company.Utils.Converter.convertEntityToDto;
