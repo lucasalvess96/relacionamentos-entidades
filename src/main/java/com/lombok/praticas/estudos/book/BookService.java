@@ -45,8 +45,8 @@ public class BookService {
         return getCreateAndUpdateBook(bookEntity, bookDto);
     }
 
-    public Optional<BookDto> detailBook(Long id) {
-        Optional<BookEntity> bookEntity = bookRepository.findById(id);
+    public Optional<BookDto> detailBook(String title) {
+        Optional<BookEntity> bookEntity = bookRepository.findByBookIdTitle(title);
         return bookEntity.map(entity -> Optional.of(new BookDto(entity)))
                 .orElseThrow(() -> new ErroRequest("informação não encontrada"));
     }
@@ -63,16 +63,15 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteBook(Long id) {
-        if (bookRepository.existsById(id)) {
-            bookRepository.deleteById(id);
+    public void deleteBook(String title) {
+        if (bookRepository.existsByBookIdTitle(title)) {
+            bookRepository.deleteByBookIdTitle(title);
         } else {
             throw new ErroRequest("Recurso não encontrado");
         }
     }
 
     private BookDto getCreateAndUpdateBook(BookEntity bookEntity, BookDto bookDto) {
-        bookEntity.setId(bookDto.id());
         bookEntity.setName(bookDto.name());
         bookEntity.setGenero(bookDto.genero());
         bookEntity.setBookId(convertBookIdfromDto(bookDto));

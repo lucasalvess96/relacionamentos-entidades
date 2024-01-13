@@ -48,9 +48,9 @@ public class BookController {
         return ResponseEntity.ok(bookService.updateBook(id, BookDto));
     }
 
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<BookDto> detail(@PathVariable @Valid Long id) {
-        Optional<BookDto> companyDetailDto = bookService.detailBook(id);
+    @GetMapping("/detail/{title}")
+    public ResponseEntity<BookDto> detail(@PathVariable @Valid String title) {
+        Optional<BookDto> companyDetailDto = bookService.detailBook(title);
         return companyDetailDto.map(detailDto -> ResponseEntity.ok()
                         .body(detailDto))
                 .orElseGet(() -> ResponseEntity.notFound()
@@ -67,9 +67,10 @@ public class BookController {
         return ResponseEntity.ok(bookService.searchListBook(name));
     }
 
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<PersonEntity> delete(@PathVariable Long id) {
-        bookService.deleteBook(id);
+    @DeleteMapping("delete/{title}")
+    @Transactional
+    public ResponseEntity<PersonEntity> delete(@PathVariable String title) {
+        bookService.deleteBook(title);
         return ResponseEntity.noContent()
                 .build();
     }
