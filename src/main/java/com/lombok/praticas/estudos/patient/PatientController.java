@@ -3,7 +3,11 @@ package com.lombok.praticas.estudos.patient;
 import com.lombok.praticas.estudos.patient.Dto.PatientDto;
 import com.lombok.praticas.estudos.patient.Dto.PatientSearchDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -36,26 +40,65 @@ public class PatientController {
             })
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<PatientDto> create(@RequestBody @Valid PatientDto patientDto) {
+    public ResponseEntity<PatientDto> create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Objeto contendo informações da nova pessoa",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = PatientDto.class)
+                    )
+            )
+            @RequestBody @Valid PatientDto patientDto) {
         PatientDto patientCreate = patientService.patientCreate(patientDto);
         return ResponseEntity.created(URI.create("/create/" + patientCreate.id()))
                 .body(patientService.patientCreate(patientDto));
     }
 
+    @Operation(summary = "Listar pessoas com paginação",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de pessoas retornada com sucesso",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class, allowableValues = "type=PatientDto")
+                            )
+                    )
+            })
     @GetMapping("/pagination")
     public ResponseEntity<Page<PatientDto>> patientPagination(@PageableDefault(direction = Sort.Direction.DESC)
                                                               Pageable pageable) {
         return ResponseEntity.ok(patientService.patientPagination(pageable));
     }
 
+    @Operation(summary = "Listar todas as pessoas",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de pessoas retornada com sucesso",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PatientDto.class))
+                            )
+                    )
+            })
     @GetMapping("/list")
     public ResponseEntity<List<PatientDto>> patientList() {
         return ResponseEntity.ok(patientService.patientList());
     }
 
+    @Operation(summary = "Atualiza uma nova pessoa",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Dados alterados com sucesso"),
+                    @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content)
+            })
     @PutMapping("/update/{id}")
     @Transactional
-    public ResponseEntity<PatientDto> update(@PathVariable Long id, @RequestBody @Valid PatientDto patientDto) {
+    public ResponseEntity<PatientDto> update(
+            @Parameter(
+                    name = "id",
+                    description = "ID da pessoa",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(type = "integer", format = "int64", example = "1")
+            )
+            @PathVariable Long id, @RequestBody @Valid PatientDto patientDto) {
         return ResponseEntity.ok(patientService.patientUpdate(id, patientDto));
     }
 
@@ -65,7 +108,15 @@ public class PatientController {
                     @ApiResponse(responseCode = "404", description = "Pessoa não encontrada", content = @Content)
             })
     @GetMapping("/detail/{id}")
-    public ResponseEntity<PatientDto> detail(@PathVariable @Valid Long id) {
+    public ResponseEntity<PatientDto> detail(
+            @Parameter(
+                    name = "id",
+                    description = "ID da pessoa",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(type = "integer", format = "int64", example = "1")
+            )
+            @PathVariable @Valid Long id) {
         Optional<PatientDto> patientDetailDto = patientService.patientDetail(id);
         return patientDetailDto.map(detailDto -> ResponseEntity.ok()
                         .body(detailDto))
@@ -73,18 +124,53 @@ public class PatientController {
                         .build());
     }
 
+    @Operation(summary = "Pesquisar pessoas com paginação",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Página de resultados da pesquisa retornada com " +
+                            "sucesso",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class, allowableValues = "type" +
+                                            "=PatientSearchDto")
+                            )
+                    )
+            })
     @GetMapping("/search/pagination")
     public ResponseEntity<Page<PatientSearchDto>> pagedSearch(@RequestParam String name, Pageable pageable) {
         return ResponseEntity.ok(patientService.searchPatientPagination(name, pageable));
     }
 
+    @Operation(summary = "Pesquisar pessoas com lista",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lita de resultados da pesquisa retornada com " +
+                            "sucesso",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class, allowableValues = "type" +
+                                            "=PatientSearchDto")
+                            )
+                    )
+            })
     @GetMapping("/search/list")
     public ResponseEntity<List<PatientSearchDto>> searchList(@RequestParam String name) {
         return ResponseEntity.ok(patientService.searchListPerson(name));
     }
 
+    @Operation(summary = "Excluir pessoa pelo ID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Pessoa excluída com sucesso"),
+                    @ApiResponse(responseCode = "404", description = "Pessoa não encontrada")
+            })
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<PatientEntity> delete(@PathVariable Long id) {
+    public ResponseEntity<PatientEntity> delete(
+            @Parameter(
+                    name = "id",
+                    description = "ID da pessoa",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(type = "integer", format = "int64", example = "1")
+            )
+            @PathVariable Long id) {
         patientService.patientDelete(id);
         return ResponseEntity.noContent()
                 .build();
