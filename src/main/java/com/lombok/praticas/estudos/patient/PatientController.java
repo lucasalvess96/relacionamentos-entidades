@@ -2,6 +2,7 @@ package com.lombok.praticas.estudos.patient;
 
 import com.lombok.praticas.estudos.patient.Dto.PatientDto;
 import com.lombok.praticas.estudos.patient.Dto.PatientSearchDto;
+import com.lombok.praticas.estudos.patient.swagger.PatientSwagger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -25,7 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("patient")
 @CrossOrigin
-public class PatientController {
+public class PatientController implements PatientSwagger {
 
     private final PatientService patientService;
 
@@ -33,37 +34,18 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @Operation(summary = "Criar uma nova pessoa",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Pessoa criada com sucesso"),
-                    @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content)
-            })
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<PatientDto> create(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Objeto contendo informações da nova pessoa",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(implementation = PatientDto.class)
-                    )
-            )
-            @RequestBody @Valid PatientDto patientDto) {
+    @Override
+    public ResponseEntity<PatientDto> create(@RequestBody @Valid PatientDto patientDto) {
         PatientDto patientCreate = patientService.patientCreate(patientDto);
         return ResponseEntity.created(URI.create("/create/" + patientCreate.id()))
                 .body(patientService.patientCreate(patientDto));
     }
 
-    @Operation(summary = "Listar pessoas com paginação",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de pessoas retornada com sucesso",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Page.class, allowableValues = "type=PatientDto")
-                            )
-                    )
-            })
+
     @GetMapping("/pagination")
+    @Override
     public ResponseEntity<Page<PatientDto>> patientPagination(@PageableDefault(direction = Sort.Direction.DESC)
                                                               Pageable pageable) {
         return ResponseEntity.ok(patientService.patientPagination(pageable));
