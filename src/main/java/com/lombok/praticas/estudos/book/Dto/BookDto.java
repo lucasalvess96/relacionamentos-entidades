@@ -8,10 +8,8 @@ public record BookDto(String name, String genero, String title, String language)
         this(
                 bookEntity.getName(),
                 bookEntity.getGenero(),
-                bookEntity.getBookId()
-                        .getTitle(),
-                bookEntity.getBookId()
-                        .getLanguage()
+                bookEntity.getBookId().getTitle(),
+                bookEntity.getBookId().getLanguage()
         );
     }
 }
