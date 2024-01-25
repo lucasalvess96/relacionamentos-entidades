@@ -1,7 +1,9 @@
 package com.lombok.praticas.estudos.book;
 
 import com.lombok.praticas.estudos.book.Dto.BookDto;
+import com.lombok.praticas.estudos.book.Dto.BookSearch;
 import com.lombok.praticas.estudos.bookId.BookId;
+import com.lombok.praticas.estudos.comun.ErroRequest;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +22,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -166,5 +169,191 @@ class BookServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         assertEquals(0, result.getTotalElements());
+    }
+
+    @Test
+    @DisplayName("Should return the updated book in a mocked form")
+    void updateBookMock() {
+        BookEntity existingBookEntity = new BookEntity(new BookId("1", "Java"), "Java 101", "Tecnologia");
+        when(bookRepositoryMock.findById(1L)).thenReturn(Optional.of(existingBookEntity));
+        when(bookRepositoryMock.save(any(BookEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        BookDto updatedBookDto = bookServiceMock.updateBook(1L, new BookDto("Updated Book", "New Genre", "New " +
+                "Title", "New Language"));
+        verify(bookRepositoryMock, times(1)).findById(1L);
+        verify(bookRepositoryMock, times(1)).save(any(BookEntity.class));
+        assertNotNull(updatedBookDto);
+        assertEquals("Updated Book", updatedBookDto.name());
+        assertEquals("New Genre", updatedBookDto.genero());
+        assertEquals("New Title", updatedBookDto.title());
+        assertEquals("New Language", updatedBookDto.language());
+    }
+
+    @Test
+    @DisplayName("Should throw ErroRequest when book ID not found during update")
+    void updateBookNotFoundMock() {
+        when(bookRepositoryMock.findById(1L)).thenReturn(Optional.empty());
+        ErroRequest erroRequest = assertThrows(ErroRequest.class, () ->
+                bookServiceMock.updateBook(1L, new BookDto("Updated Book", "New Genre", "New Title", "New Language")));
+        assertEquals("informação não encontrada", erroRequest.getMessage());
+        verify(bookRepositoryMock, times(1)).findById(1L);
+        verify(bookRepositoryMock, never()).save(any(BookEntity.class));
+    }
+
+    @Test
+    @DisplayName("Should return the book details when found")
+    void detailBookMockSuccess() {
+        when(bookRepositoryMock.findByBookIdTitle("Java 101")).thenReturn(Optional.of(this.bookEntity));
+        Optional<BookDto> result = bookServiceMock.detailBook("Java 101");
+        assertTrue(result.isPresent());
+        assertEquals("Java 101", result.get().name());
+        assertEquals("Tecnologia", result.get().genero());
+    }
+
+    @Test
+    @DisplayName("Should throw ErroRequest when book details not found")
+    void detailBookMockNotFound() {
+        when(bookRepositoryMock.findByBookIdTitle("Nonexistent Book")).thenReturn(Optional.empty());
+        ErroRequest erroRequest = assertThrows(ErroRequest.class, () -> bookServiceMock.detailBook("Nonexistent Book"));
+        assertEquals("informação não encontrada", erroRequest.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should return the book details when found")
+    void detailBookRealDataSuccess() {
+        BookEntity bookEntity = new BookEntity(new BookId("Java 101", "Java"), "Java 101", "Tecnologia");
+        bookRepository.save(bookEntity);
+        Optional<BookDto> result = bookService.detailBook("Java 101");
+        assertTrue(result.isPresent());
+        assertEquals("Java 101", result.get().name());
+        assertEquals("Tecnologia", result.get().genero());
+    }
+
+    @Test
+    @DisplayName("Should throw ErroRequest when book details not found")
+    void detailBookRealDataNotFound() {
+        ErroRequest erroRequest = assertThrows(ErroRequest.class, () -> bookService.detailBook("Nonexistent Book"));
+        assertEquals("informação não encontrada", erroRequest.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should return a paginated list of BookSearch")
+    void searchBookMockPagination() {
+        String searchName = "Java";
+        BookEntity bookEntityTwo = new BookEntity(new BookId("1", "Java"), "Clean Code", "Tecnologia");
+        Pageable pageable = Pageable.unpaged();
+        Page<BookEntity> bookEntityPage = new PageImpl<>(List.of(this.bookEntity, bookEntityTwo));
+        when(bookRepositoryMock.findByNameContainingIgnoreCase(searchName, pageable)).thenReturn(bookEntityPage);
+        Page<BookSearch> result = bookServiceMock.searchBookPagination(searchName, pageable);
+        assertEquals(2, result.getTotalElements());
+        assertEquals("Java 101", result.getContent().get(0).name());
+        assertEquals("Clean Code", result.getContent().get(1).name());
+    }
+
+    @Test
+    @DisplayName("Should return a paginated list of BookSearch")
+    void searchFailBookMockPagination() {
+        String searchName = "Java";
+        Pageable pageable = Pageable.unpaged();
+        Page<BookEntity> emptyPage = new PageImpl<>(List.of());
+        when(bookRepositoryMock.findByNameContainingIgnoreCase(searchName, pageable)).thenReturn(emptyPage);
+        BookService bookService = new BookService(bookRepositoryMock);
+        Page<BookSearch> result = bookService.searchBookPagination(searchName, pageable);
+        assertTrue(result.isEmpty());
+        assertEquals(0, result.getContent().size());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Should return a paginated list of BookSearch with real data")
+    void searchBookRealPagination() {
+        BookEntity bookEntityTwo = new BookEntity(new BookId("1", "Java"), "Clean Code", "Tecnologia");
+        bookRepository.saveAll(List.of(this.bookEntity, bookEntityTwo));
+        Page<BookSearch> result = bookService.searchBookPagination("Java", Pageable.unpaged());
+        assertEquals(2, result.getTotalElements());
+        assertEquals("Java 101", result.getContent().get(0).name());
+        assertEquals("Clean Code", result.getContent().get(1).name());
+    }
+
+    @Test
+    @DisplayName("Should return an empty paginated list of BookSearch with real data")
+    void searchFailBookRealPagination() {
+        Page<BookSearch> result = bookService.searchBookPagination("Nonexistent", Pageable.unpaged());
+        assertTrue(result.isEmpty());
+        assertEquals(0, result.getContent().size());
+    }
+
+    @Test
+    @DisplayName("Should return a list of BookSearch")
+    void searchListBookMock() {
+        BookEntity bookEntityTwo = new BookEntity(new BookId("1", "Java"), "Clean Code", "Tecnologia");
+        List<BookEntity> bookEntities = List.of(this.bookEntity, bookEntityTwo);
+        when(bookRepositoryMock.findByNameContainingIgnoreCase("Java")).thenReturn(bookEntities);
+        List<BookSearch> result = bookServiceMock.searchListBook("Java");
+        assertEquals(2, result.size());
+        assertEquals("Java 101", result.get(0).name());
+        assertEquals("Clean Code", result.get(1).name());
+    }
+
+    @Test
+    @DisplayName("Should return an empty list of BookSearch")
+    void searchFailListBookMock() {
+        when(bookRepositoryMock.findByNameContainingIgnoreCase("Java")).thenReturn(Collections.emptyList());
+        List<BookSearch> result = bookServiceMock.searchListBook("Java");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Should return a list of BookSearch with real data")
+    void searchListBookReal() {
+        BookEntity bookEntityTwo = new BookEntity(new BookId("1", "Java"), "Clean Code", "Tecnologia");
+        bookRepository.saveAll(List.of(this.bookEntity, bookEntityTwo));
+        List<BookSearch> result = bookService.searchListBook("Java");
+        assertEquals(2, result.size());
+        assertEquals("Java 101", result.get(0).name());
+        assertEquals("Clean Code", result.get(1).name());
+    }
+
+    @Test
+    @DisplayName("Should return an empty list of BookSearch with real data")
+    void searchFailListBookReal() {
+        List<BookSearch> result = bookService.searchListBook("Nonexistent");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should delete book successfully")
+    void deleteBookMockSuccess() {
+        String title = "Java 101";
+        when(bookRepositoryMock.existsByBookIdTitle(title)).thenReturn(true);
+        bookServiceMock.deleteBook(title);
+        verify(bookRepositoryMock, times(1)).deleteByBookIdTitle(title);
+    }
+
+    @Test
+    @DisplayName("Should throw ErroRequest when trying to delete non-existent book")
+    void deleteBookMockNotFound() {
+        String title = "Nonexistent Book";
+        when(bookRepositoryMock.existsByBookIdTitle(title)).thenReturn(false);
+        ErroRequest erroRequest = assertThrows(ErroRequest.class, () -> bookServiceMock.deleteBook(title));
+        assertEquals("Recurso não encontrado", erroRequest.getMessage());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Should delete book successfully in real data")
+    void deleteBookSuccessReal() {
+        String title = "Java 101";
+        bookRepository.save(new BookEntity(new BookId("1", "Java"), "Java 101", "Tecnologia"));
+        bookService.deleteBook(title);
+        assertFalse(bookRepository.existsByBookIdTitle(title));
+    }
+
+    @Test
+    @DisplayName("Should throw ErroRequest when trying to delete non-existent book in real data")
+    void deleteBookNotFoundReal() {
+        String title = "Nonexistent Book";
+        ErroRequest erroRequest = assertThrows(ErroRequest.class, () -> bookService.deleteBook(title));
+        assertEquals("Recurso não encontrado", erroRequest.getMessage());
     }
 }
