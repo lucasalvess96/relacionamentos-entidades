@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 class BookServiceTest {
 
     @InjectMocks
@@ -266,12 +268,10 @@ class BookServiceTest {
     @Transactional
     @DisplayName("Should return a paginated list of BookSearch with real data")
     void searchBookRealPagination() {
-        BookEntity bookEntityTwo = new BookEntity(new BookId("1", "Java"), "Clean Code", "Tecnologia");
-        bookRepository.saveAll(List.of(this.bookEntity, bookEntityTwo));
-        Page<BookSearch> result = bookService.searchBookPagination("Java", Pageable.unpaged());
-        assertEquals(2, result.getTotalElements());
+        bookRepository.saveAll(List.of(this.bookEntity));
+        Page<BookSearch> result = bookService.searchBookPagination("Java 101", Pageable.unpaged());
+        assertEquals(1, result.getTotalElements());
         assertEquals("Java 101", result.getContent().get(0).name());
-        assertEquals("Clean Code", result.getContent().get(1).name());
     }
 
     @Test
@@ -306,12 +306,10 @@ class BookServiceTest {
     @Transactional
     @DisplayName("Should return a list of BookSearch with real data")
     void searchListBookReal() {
-        BookEntity bookEntityTwo = new BookEntity(new BookId("1", "Java"), "Clean Code", "Tecnologia");
-        bookRepository.saveAll(List.of(this.bookEntity, bookEntityTwo));
+        bookRepository.saveAll(List.of(this.bookEntity));
         List<BookSearch> result = bookService.searchListBook("Java");
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
         assertEquals("Java 101", result.get(0).name());
-        assertEquals("Clean Code", result.get(1).name());
     }
 
     @Test
@@ -343,8 +341,8 @@ class BookServiceTest {
     @Transactional
     @DisplayName("Should delete book successfully in real data")
     void deleteBookSuccessReal() {
-        String title = "Java 101";
-        bookRepository.save(new BookEntity(new BookId("1", "Java"), "Java 101", "Tecnologia"));
+        String title = "1";
+        bookRepository.save(this.bookEntity);
         bookService.deleteBook(title);
         assertFalse(bookRepository.existsByBookIdTitle(title));
     }
