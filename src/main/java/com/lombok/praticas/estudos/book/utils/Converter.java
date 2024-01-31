@@ -6,7 +6,7 @@ import com.lombok.praticas.estudos.bookId.BookId;
 public final class Converter {
 
     private Converter() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated.");
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
     public static BookId convertBookIdfromDto(BookDto bookDto) {
