@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.book.Dto;
+package com.lombok.praticas.estudos.book.dto;
 
 import com.lombok.praticas.estudos.book.BookEntity;
 

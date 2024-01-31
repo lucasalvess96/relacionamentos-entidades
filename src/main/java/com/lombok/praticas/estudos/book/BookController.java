@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.book;
 
-import com.lombok.praticas.estudos.book.Dto.BookDto;
-import com.lombok.praticas.estudos.book.Dto.BookSearch;
+import com.lombok.praticas.estudos.book.dto.BookDto;
+import com.lombok.praticas.estudos.book.dto.BookSearch;
 import com.lombok.praticas.estudos.person.PersonEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

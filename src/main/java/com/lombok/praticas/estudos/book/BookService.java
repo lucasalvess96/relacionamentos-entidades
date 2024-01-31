@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.book;
 
-import com.lombok.praticas.estudos.book.Dto.BookDto;
-import com.lombok.praticas.estudos.book.Dto.BookSearch;
+import com.lombok.praticas.estudos.book.dto.BookDto;
+import com.lombok.praticas.estudos.book.dto.BookSearch;
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.lombok.praticas.estudos.book.utils.Converter.convertBookIdfromDto;
 
@@ -29,9 +28,7 @@ public class BookService {
 
     public List<BookDto> listBook() {
         List<BookEntity> bookEntity = bookRepository.findAll();
-        return bookEntity.stream()
-                .map(BookDto::new)
-                .collect(Collectors.toList());
+        return bookEntity.stream().map(BookDto::new).toList();
     }
 
     public Page<BookDto> paginationBook(Pageable pageable) {
@@ -58,13 +55,11 @@ public class BookService {
 
     public List<BookSearch> searchListBook(String name) {
         List<BookEntity> bookEntities = bookRepository.findByNameContainingIgnoreCase(name);
-        return bookEntities.stream()
-                .map(entity -> new BookSearch(entity.getName()))
-                .collect(Collectors.toList());
+        return bookEntities.stream().map(entity -> new BookSearch(entity.getName())).toList();
     }
 
     public void deleteBook(String title) {
-        if (bookRepository.existsByBookIdTitle(title)) {
+        if (Boolean.TRUE.equals(bookRepository.existsByBookIdTitle(title))) {
             bookRepository.deleteByBookIdTitle(title);
         } else {
             throw new ErroRequest("Recurso não encontrado");
