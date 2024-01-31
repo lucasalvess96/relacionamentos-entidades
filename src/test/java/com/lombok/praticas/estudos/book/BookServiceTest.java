@@ -195,9 +195,9 @@ class BookServiceTest {
     void updateBookNotFoundMock() {
         when(bookRepositoryMock.findById(1L)).thenReturn(Optional.empty());
         ErroRequest erroRequest = assertThrows(ErroRequest.class, () ->
-                bookServiceMock.updateBook(1L, new BookDto("Updated Book", "New Genre", "New Title", "New Language")));
+                bookServiceMock.updateBook(1L, this.bookDto));
         assertEquals("informação não encontrada", erroRequest.getMessage());
-        verify(bookRepositoryMock, times(1)).findById(1L);
+        verify(bookRepositoryMock).findById(1L);
         verify(bookRepositoryMock, never()).save(any(BookEntity.class));
     }
 

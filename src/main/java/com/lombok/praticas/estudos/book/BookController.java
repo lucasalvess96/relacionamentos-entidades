@@ -44,8 +44,8 @@ public class BookController {
 
     @PutMapping("/update/{id}")
     @Transactional
-    public ResponseEntity<BookDto> update(@PathVariable Long id, @RequestBody @Valid BookDto BookDto) {
-        return ResponseEntity.ok(bookService.updateBook(id, BookDto));
+    public ResponseEntity<BookDto> update(@PathVariable Long id, @RequestBody @Valid BookDto bookDto) {
+        return ResponseEntity.ok(bookService.updateBook(id, bookDto));
     }
 
     @GetMapping("/detail/{title}")
