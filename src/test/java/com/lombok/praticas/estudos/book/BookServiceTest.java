@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +78,40 @@ class BookServiceTest {
         assertEquals("Tecnologia", savedBooks.get(0).getGenero());
         assertEquals("Prog", savedBooks.get(0).getBookId().getTitle());
         assertEquals("Java", savedBooks.get(0).getBookId().getLanguage());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Clean Code, Desenvolvimento, Prog, Java",
+            "Effective Java, Tecnologia, Prog, Java",
+            "Refactoring, Desenvolvimento, Prog, Java"
+    })
+    @DisplayName("Should return the creation of a book with different data")
+    void createBookMockWithDifferentData(String name, String genero, String title, String language) {
+        BookDto differentBookDto = new BookDto(name, genero, title, language);
+        when(bookRepositoryMock.save(any(BookEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        bookServiceMock.createBook(differentBookDto);
+        verify(bookRepositoryMock, times(1)).save(any(BookEntity.class));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Java 101, Tecnologia, Prog, Java",
+            "Clean Code, Desenvolvimento, Prog, Java",
+            "Data Science 101, Ciência, Data Science, Python"
+    })
+    @DisplayName("Should return the creation of a book with real data (parametrized)")
+    @Transactional
+    void createBookRealDataParametrized(String name, String genero, String title, String language) {
+        BookDto bookDto = new BookDto(name, genero, title, language);
+        bookService.createBook(bookDto);
+        List<BookEntity> savedBooks = bookRepository.findAll();
+        assertNotNull(savedBooks);
+        assertEquals(1, savedBooks.size());
+        assertEquals(name, savedBooks.get(0).getName());
+        assertEquals(genero, savedBooks.get(0).getGenero());
+        assertEquals(title, savedBooks.get(0).getBookId().getTitle());
+        assertEquals(language, savedBooks.get(0).getBookId().getLanguage());
     }
 
     @Test
@@ -149,6 +185,11 @@ class BookServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         assertEquals(0, result.getTotalElements());
+        assertEquals(0, result.getNumberOfElements());
+        assertEquals(0, result.getNumber());
+        assertEquals(1, result.getTotalPages());
+        assertFalse(result.hasPrevious());
+        assertFalse(result.hasNext());
     }
 
     @Test
@@ -171,6 +212,11 @@ class BookServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         assertEquals(0, result.getTotalElements());
+        assertEquals(0, result.getNumberOfElements());
+        assertEquals(0, result.getNumber());
+        assertEquals(0, result.getTotalPages());
+        assertFalse(result.hasPrevious());
+        assertFalse(result.hasNext());
     }
 
     @Test
