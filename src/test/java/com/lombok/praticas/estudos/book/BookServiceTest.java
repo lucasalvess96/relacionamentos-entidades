@@ -2,7 +2,7 @@ package com.lombok.praticas.estudos.book;
 
 import com.lombok.praticas.estudos.book.dto.BookDto;
 import com.lombok.praticas.estudos.book.dto.BookSearch;
-import com.lombok.praticas.estudos.bookId.BookId;
+import com.lombok.praticas.estudos.bookid.BookId;
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;

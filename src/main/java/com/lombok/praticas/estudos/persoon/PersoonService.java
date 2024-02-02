@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public record PersoonService(PersoonRepository persoonRepository, AddressRepository addressRepository) {
@@ -24,9 +23,7 @@ public record PersoonService(PersoonRepository persoonRepository, AddressReposit
 
     public List<PersonDto> personList() {
         List<Person> person = persoonRepository.findAll();
-        return person.stream()
-                .map(PersonDto::new)
-                .collect(Collectors.toList());
+        return person.stream().map(PersonDto::new).toList();
     }
 
     public Page<PersonDto> personPage(Pageable pageable) {
@@ -53,9 +50,7 @@ public record PersoonService(PersoonRepository persoonRepository, AddressReposit
 
     public List<PersonSearchDto> searchListPerson(String name) {
         List<Person> personEntities = persoonRepository.findByNameContainingIgnoreCase(name);
-        return personEntities.stream()
-                .map(personEntity -> new PersonSearchDto(personEntity.getName()))
-                .collect(Collectors.toList());
+        return personEntities.stream().map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
     }
 
     public void personDelete(Long id) {

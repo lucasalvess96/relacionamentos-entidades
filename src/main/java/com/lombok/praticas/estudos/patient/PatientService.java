@@ -1,9 +1,9 @@
 package com.lombok.praticas.estudos.patient;
 
-import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationEntity;
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.patient.Dto.PatientDto;
-import com.lombok.praticas.estudos.patient.Dto.PatientSearchDto;
+import com.lombok.praticas.estudos.patient.dto.PatientDto;
+import com.lombok.praticas.estudos.patient.dto.PatientSearchDto;
+import com.lombok.praticas.estudos.patientconsultation.PatientConsultationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -75,7 +75,6 @@ public class PatientService {
         patientEntity.setName(patientDto.name());
         patientEntity.setAge(patientDto.age());
         patientEntity.setCpf(patientDto.cpf());
-
         List<PatientConsultationEntity> patientConsultationList = patientEntity.getPatientConsultationList();
         if (patientDto.patientConsultationDto() != null) {
             patientConsultationList.addAll(patientDto.patientConsultationDto()

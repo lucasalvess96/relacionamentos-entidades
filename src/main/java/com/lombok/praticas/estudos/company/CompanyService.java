@@ -1,9 +1,9 @@
 package com.lombok.praticas.estudos.company;
 
-import com.lombok.praticas.estudos.company.Dto.CompanyDto;
-import com.lombok.praticas.estudos.company.Dto.CompanySearch;
+import com.lombok.praticas.estudos.company.dto.CompanyDto;
+import com.lombok.praticas.estudos.company.dto.CompanySearch;
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.contactPerson.ContactPersonEntity;
+import com.lombok.praticas.estudos.contactperson.ContactPersonEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.lombok.praticas.estudos.company.Utils.Converter.convertDtoToEntity;
+import static com.lombok.praticas.estudos.company.utils.Converter.convertDtoToEntity;
 
 @Service
 public record CompanyService(CompanyRepository companyRepository) {

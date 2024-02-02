@@ -1,6 +1,6 @@
 package com.lombok.praticas.estudos.book;
 
-import com.lombok.praticas.estudos.bookId.BookId;
+import com.lombok.praticas.estudos.bookid.BookId;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;

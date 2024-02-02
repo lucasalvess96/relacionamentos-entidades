@@ -1,6 +1,6 @@
 package com.lombok.praticas.estudos.company;
 
-import com.lombok.praticas.estudos.contactPerson.ContactPersonEntity;
+import com.lombok.praticas.estudos.contactperson.ContactPersonEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +19,11 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String address;
+
     private String phone;
 
     @Embedded

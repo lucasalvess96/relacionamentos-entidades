@@ -1,6 +1,6 @@
 package com.lombok.praticas.estudos.patient;
 
-import com.lombok.praticas.estudos.PatientConsultation.PatientConsultationEntity;
+import com.lombok.praticas.estudos.patientconsultation.PatientConsultationEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public class PatientEntity {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PatientConsultationEntity> patientConsultationList = new ArrayList<>();
-    
+
 
     @Override
     public boolean equals(Object o) {

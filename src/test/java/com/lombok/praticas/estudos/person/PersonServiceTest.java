@@ -27,29 +27,25 @@ import static org.mockito.Mockito.when;
 class PersonServiceTest {
 
     @Mock
-    private PersonRepository personRepository;
-    
-    @Mock
     Pageable pageable;
-    
+
+    @Mock
+    private PersonRepository personRepository;
+
     @InjectMocks
     private PersonService personService;
-    
+
     @Test
     @DisplayName("Should be creation of a person")
     void testPersonCreate() {
         PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789");
-        
         PersonEntity savedPersonEntity = new PersonEntity();
         savedPersonEntity.setId(1L);
         savedPersonEntity.setName("John Doe");
         savedPersonEntity.setAge("30");
         savedPersonEntity.setCpf("123456789");
-        
         when(personRepository.save(any(PersonEntity.class))).thenReturn(savedPersonEntity);
-        
         PersonCreateDto result = personService.personCreate(personCreateDto);
-
         assertAll(() -> {
             assertEquals(personCreateDto.id(), result.id());
             assertEquals(personCreateDto.name(), result.name());
@@ -61,14 +57,11 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should test person list pagination")
     void testPersonListPagination() {
-        List<PersonEntity> personEntities = Collections.singletonList(new PersonEntity(1L, "John Doe", "30", "123456789"));
-        
+        List<PersonEntity> personEntities = Collections.singletonList(new PersonEntity(1L, "John Doe", "30", 
+                "123456789"));
         Page<PersonEntity> personEntityPage = new PageImpl<>(personEntities, pageable, 1);
-        
         when(personRepository.findAll(pageable)).thenReturn(personEntityPage);
-        
         Page<PersonCreateDto> result = personService.personListPagination(pageable);
-        
         assertEquals(1, result.getContent().size());
         assertEquals("John Doe", result.getContent().get(0).name());
     }
@@ -78,11 +71,8 @@ class PersonServiceTest {
     void testPersonListPaginationEmpty() {
         List<PersonEntity> emptyList = Collections.emptyList();
         Page<PersonEntity> emptyPage = new PageImpl<>(emptyList, pageable, 0);
-
         when(personRepository.findAll(pageable)).thenReturn(emptyPage);
-
         Page<PersonCreateDto> result = personService.personListPagination(pageable);
-
         assertEquals(0, result.getContent().size());
         assertTrue(result.isEmpty());
     }
@@ -94,13 +84,9 @@ class PersonServiceTest {
                 new PersonEntity(1L, "John Doe", "30", "123456789"),
                 new PersonEntity(2L, "Jane Smith", "25", "987654321")
         );
-
         when(personRepository.findAll()).thenReturn(personEntities);
-
         List<PersonCreateDto> result = personService.personList();
-
         assertEquals(2, result.size());
-
         PersonCreateDto firstPerson = result.get(0);
         assertAll(
                 () -> assertEquals(1L, firstPerson.id()),
@@ -108,7 +94,6 @@ class PersonServiceTest {
                 () -> assertEquals("30", firstPerson.age()),
                 () -> assertEquals("123456789", firstPerson.cpf())
         );
-
         PersonCreateDto secondPerson = result.get(1);
         assertAll(
                 () -> assertEquals(2L, secondPerson.id()),
@@ -122,9 +107,7 @@ class PersonServiceTest {
     @DisplayName("Should test person list with empty result")
     void testPersonListEmpty() {
         when(personRepository.findAll()).thenReturn(Collections.emptyList());
-
         List<PersonCreateDto> result = personService.personList();
-
         assertTrue(result.isEmpty());
     }
 
@@ -133,18 +116,14 @@ class PersonServiceTest {
     void testPersonUpdate() {
         Long id = 1L;
         PersonCreateDto personCreateDto = new PersonCreateDto(id, "John Doe", "30", "12345678912");
-
         PersonEntity personEntity = new PersonEntity();
         personEntity.setId(id);
         personEntity.setName("John Doe atualizado");
         personEntity.setAge("34");
         personEntity.setCpf("02345678977");
-
         when(personRepository.findById(id)).thenReturn(Optional.of(personEntity));
         when(personRepository.save(any(PersonEntity.class))).thenReturn(personEntity);
-
         PersonCreateDto updatedPerson = personService.personUpdate(id, personCreateDto);
-
         assertAll(() -> {
             assertEquals(personCreateDto.id(), updatedPerson.id());
             assertEquals(personCreateDto.name(), updatedPerson.name());
@@ -158,23 +137,18 @@ class PersonServiceTest {
     void testPersonUpdateNotFound() {
         Long id = 1L;
         PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
-
         when(personRepository.findById(id)).thenReturn(Optional.empty());
-
         assertThrows(ErroRequest.class, () -> personService.personUpdate(id, personCreateDto));
     }
-    
+
     @Test
     @DisplayName("Should return PersonCreateDto object for a valid ID")
     void testDetailPersonWithValidId() {
         Long id = 1L;
         PersonEntity personEntity = new PersonEntity(1L, "John Doe", "30", "123456789");
         Optional<PersonEntity> optionalPersonEntity = Optional.of(personEntity);
-
         when(personRepository.findById(id)).thenReturn(optionalPersonEntity);
-
         Optional<PersonCreateDto> result = personService.detailPerson(id);
-
         assertTrue(result.isPresent());
         assertEquals("John Doe", result.get().name());
         assertEquals("30", result.get().age());
@@ -186,7 +160,6 @@ class PersonServiceTest {
     void testDetailPersonWithInvalidId() {
         Long id = 2L;
         when(personRepository.findById(anyLong())).thenReturn(Optional.empty());
-
         Exception exception = assertThrows(ErroRequest.class, () -> personService.detailPerson(id));
         assertEquals("Usuário não encontrado", exception.getMessage());
     }
@@ -196,18 +169,13 @@ class PersonServiceTest {
     void testSearchPersonPagination() {
         Pageable pageable = Pageable.unpaged();
         String name = "John";
-
         PersonEntity personEntity = new PersonEntity();
         personEntity.setId(1L);
         personEntity.setName("John Doe");
-
         Page<PersonEntity> personEntityPage = new PageImpl<>(Collections.singletonList(personEntity));
-
         when(personRepository.findByNameContainingIgnoreCase(any(String.class), any(Pageable.class)))
                 .thenReturn(personEntityPage);
-
         Page<PersonSearchDto> result = personService.searchPersonPagination(name, pageable);
-
         assertEquals(1, result.getContent().size());
         assertEquals("John Doe", result.getContent().get(0).name());
     }
@@ -217,12 +185,9 @@ class PersonServiceTest {
     void testSearchPersonNotFound() {
         Pageable pageable = Pageable.unpaged();
         String name = "Jane";
-
         when(personRepository.findByNameContainingIgnoreCase(any(String.class), any(Pageable.class)))
                 .thenReturn(Page.empty());
-
         Page<PersonSearchDto> result = personService.searchPersonPagination(name, pageable);
-
         assertEquals(0, result.getContent().size());
     }
 
@@ -230,17 +195,12 @@ class PersonServiceTest {
     @DisplayName("Should search list of persons")
     void testSearchListPerson() {
         String name = "John";
-
         PersonEntity personEntity = new PersonEntity();
         personEntity.setId(1L);
         personEntity.setName("John Doe");
-
         List<PersonEntity> personEntities = Collections.singletonList(personEntity);
-
         when(personRepository.findByNameContainingIgnoreCase(any(String.class))).thenReturn(personEntities);
-
         List<PersonSearchDto> result = personService.searchListPerson(name);
-
         assertEquals(1, result.size());
         assertEquals("John Doe", result.get(0).name());
     }
@@ -249,11 +209,8 @@ class PersonServiceTest {
     @DisplayName("Should handle empty search result")
     void testSearchListPersonWithEmptyResult() {
         String name = "Jane";
-
         when(personRepository.findByNameContainingIgnoreCase(any(String.class))).thenReturn(Collections.emptyList());
-
         List<PersonSearchDto> result = personService.searchListPerson(name);
-
         assertEquals(0, result.size());
     }
 
@@ -262,7 +219,6 @@ class PersonServiceTest {
     void testDeletePersonWithValidId() {
         Long id = 1L;
         when(personRepository.existsById(id)).thenReturn(true);
-
         assertDoesNotThrow(() -> personService.deletePerson(id));
     }
 
@@ -271,7 +227,6 @@ class PersonServiceTest {
     void testDeletePersonWithInvalidId() {
         Long id = 2L;
         when(personRepository.existsById(id)).thenReturn(false);
-
         assertThrows(ErroRequest.class, () -> personService.deletePerson(id));
     }
 }

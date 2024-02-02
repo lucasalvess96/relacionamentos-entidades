@@ -11,11 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public record PersonService(PersonRepository personRepository) {
-    
+
     public PersonCreateDto personCreate(PersonCreateDto personCreateDto) {
         ValidateUser.validateUser(personCreateDto, personRepository);
         ValidateCpfUser.validateCpfUser(personCreateDto, personRepository);
@@ -30,9 +29,7 @@ public record PersonService(PersonRepository personRepository) {
 
     public List<PersonCreateDto> personList() {
         List<PersonEntity> personEntities = personRepository.findAll();
-        return personEntities.stream()
-                .map(PersonCreateDto::new)
-                .collect(Collectors.toList());
+        return personEntities.stream().map(PersonCreateDto::new).toList();
     }
 
     public PersonCreateDto personUpdate(Long id, PersonCreateDto personCreateDto) {
@@ -55,8 +52,7 @@ public record PersonService(PersonRepository personRepository) {
     public List<PersonSearchDto> searchListPerson(String name) {
         List<PersonEntity> personEntities = personRepository.findByNameContainingIgnoreCase(name);
         return personEntities.stream()
-                .map(personEntity -> new PersonSearchDto(personEntity.getName()))
-                .collect(Collectors.toList());
+                .map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
     }
 
     public void deletePerson(Long id) {
@@ -68,13 +64,12 @@ public record PersonService(PersonRepository personRepository) {
     }
 
     public PersonCreateDto getPersonCreateDtoObject(PersonCreateDto personCreateDto, PersonEntity person) {
-        if(person == null) {
+        if (person == null) {
             throw new NullPointerException("PersonEntity cannot be null");
-        }        
+        }
         person.setName(personCreateDto.name());
         person.setAge(personCreateDto.age());
         person.setCpf(personCreateDto.cpf());
-
         return new PersonCreateDto(personRepository.save(person));
     }
 }

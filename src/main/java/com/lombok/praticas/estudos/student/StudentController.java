@@ -1,8 +1,8 @@
 package com.lombok.praticas.estudos.student;
 
-import com.lombok.praticas.estudos.student.Dto.StudenCreateDto;
-import com.lombok.praticas.estudos.student.Dto.StudentListDto;
-import com.lombok.praticas.estudos.student.Dto.StudentSearchDto;
+import com.lombok.praticas.estudos.student.dto.StudenCreateDto;
+import com.lombok.praticas.estudos.student.dto.StudentListDto;
+import com.lombok.praticas.estudos.student.dto.StudentSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

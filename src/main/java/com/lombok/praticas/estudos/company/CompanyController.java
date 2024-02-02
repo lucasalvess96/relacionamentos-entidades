@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.company;
 
-import com.lombok.praticas.estudos.company.Dto.CompanyDto;
-import com.lombok.praticas.estudos.company.Dto.CompanySearch;
+import com.lombok.praticas.estudos.company.dto.CompanyDto;
+import com.lombok.praticas.estudos.company.dto.CompanySearch;
 import com.lombok.praticas.estudos.person.PersonEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

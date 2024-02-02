@@ -28,26 +28,23 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PersonControllerTest {
-    
-    @Mock
-    private PersonService personService;
-    
+
     @Mock
     Pageable pageable;
-    
+
+    @Mock
+    private PersonService personService;
+
     @InjectMocks
     private PersonController personController;
-    
+
     @Test
     @DisplayName("Should return created person")
     void testPersonCreate() {
         PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789081");
         PersonCreateDto savedPersonCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789081");
-
         when(personService.personCreate(any(PersonCreateDto.class))).thenReturn(savedPersonCreateDto);
-
         ResponseEntity<PersonCreateDto> response = personController.create(personCreateDto);
-
         assertNotNull(response);
         assertEquals(201, response.getStatusCode().value());
         assertNotNull(response.getHeaders().getLocation());
@@ -59,14 +56,10 @@ class PersonControllerTest {
     @DisplayName("Should test list method pagination")
     void testPersonListPaginated() {
         Pageable pageable = Pageable.unpaged();
-
         PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789");
         Page<PersonCreateDto> personCreateDtoPage = new PageImpl<>(Collections.singletonList(personCreateDto));
-
         when(personService.personListPagination(pageable)).thenReturn(personCreateDtoPage);
-
         ResponseEntity<Page<PersonCreateDto>> response = personController.list(pageable);
-
         assertEquals(personCreateDtoPage, response.getBody());
     }
 
@@ -74,23 +67,18 @@ class PersonControllerTest {
     @DisplayName("Should test list method with empty pagination")
     void testListWithEmptyPagination() {
         Page<PersonCreateDto> emptyPage = new PageImpl<>(Collections.emptyList());
-
         when(personService.personListPagination(pageable)).thenReturn(emptyPage);
-
         ResponseEntity<Page<PersonCreateDto>> response = personController.list(pageable);
-
         assertEquals(emptyPage, response.getBody());
     }
 
     @Test
     @DisplayName("Should test list method")
     void testList() {
-        List<PersonCreateDto> personList = Collections.singletonList(new PersonCreateDto(1L, "John Doe", "30", "123456789"));
-
+        List<PersonCreateDto> personList = Collections.singletonList(new PersonCreateDto(1L, "John Doe", "30", 
+                "123456789"));
         when(personService.personList()).thenReturn(personList);
-
         ResponseEntity<List<PersonCreateDto>> response = personController.list();
-
         assertEquals(personList, response.getBody());
     }
 
@@ -98,12 +86,9 @@ class PersonControllerTest {
     @DisplayName("Should test list method with empty list")
     void testListEmpty() {
         List<PersonCreateDto> personList = Collections.emptyList();
-
         when(personService.personList()).thenReturn(personList);
-
         ResponseEntity<List<PersonCreateDto>> response = personController.list();
-
-        assertEquals(personList, response.getBody());        
+        assertEquals(personList, response.getBody());
     }
 
     @Test
@@ -111,11 +96,8 @@ class PersonControllerTest {
     void testUpdatePersonWithValidId() {
         Long id = 1L;
         PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
-        
         when(personService.personUpdate(any(Long.class), any(PersonCreateDto.class))).thenReturn(personCreateDto);
-
         ResponseEntity<PersonCreateDto> response = personController.update(id, personCreateDto);
-
         assertEquals(200, response.getStatusCode().value());
         assertEquals(personCreateDto.name(), Objects.requireNonNull(response.getBody()).name());
         assertEquals(personCreateDto.age(), response.getBody().age());
@@ -127,10 +109,8 @@ class PersonControllerTest {
     void testUpdatePersonWithInvalidId() {
         Long id = 1L;
         PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
-
         when(personService.personUpdate(any(Long.class), any(PersonCreateDto.class)))
                 .thenThrow(new ErroRequest("ID não encontrado"));
-
         assertThrows(ErroRequest.class, () -> personController.update(id, personCreateDto));
     }
 
@@ -140,9 +120,7 @@ class PersonControllerTest {
         Long id = 1L;
         PersonCreateDto personDetail = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
         when(personService.detailPerson(id)).thenReturn(Optional.of(personDetail));
-
         ResponseEntity<PersonCreateDto> response = personController.detail(id);
-
         assertEquals(200, response.getStatusCode().value());
         assertEquals(personDetail, response.getBody());
     }
@@ -152,9 +130,7 @@ class PersonControllerTest {
     void testDetailWithInvalidId() {
         Long id = 2L;
         when(personService.detailPerson(id)).thenReturn(Optional.empty());
-
         ResponseEntity<PersonCreateDto> response = personController.detail(id);
-
         assertEquals(404, response.getStatusCode().value());
     }
 
@@ -163,15 +139,11 @@ class PersonControllerTest {
     void testPagedSearch() {
         String name = "John";
         Pageable pageable = PageRequest.of(0, 10);
-
         PersonSearchDto personSearchDto = new PersonSearchDto("John Doe");
         List<PersonSearchDto> personSearchDtos = Collections.singletonList(personSearchDto);
         Page<PersonSearchDto> personSearchDtoPage = new PageImpl<>(personSearchDtos);
-
         when(personService.searchPersonPagination(any(String.class), any(Pageable.class))).thenReturn(personSearchDtoPage);
-
         ResponseEntity<Page<PersonSearchDto>> response = personController.pagedSearch(name, pageable);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, Objects.requireNonNull(response.getBody()).getContent().size());
         assertEquals("John Doe", response.getBody().getContent().get(0).name());
@@ -181,14 +153,10 @@ class PersonControllerTest {
     @DisplayName("Should return list search results")
     void testSearchList() {
         String name = "John";
-
         PersonSearchDto personSearchDto = new PersonSearchDto("John Doe");
         List<PersonSearchDto> personSearchDtos = Collections.singletonList(personSearchDto);
-
         when(personService.searchListPerson(any(String.class))).thenReturn(personSearchDtos);
-
         ResponseEntity<List<PersonSearchDto>> response = personController.searchList(name);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, Objects.requireNonNull(response.getBody()).size());
         assertEquals("John Doe", response.getBody().get(0).name());
@@ -199,9 +167,7 @@ class PersonControllerTest {
     void testDeletePersonWithValidId() {
         Long id = 1L;
         doNothing().when(personService).deletePerson(any(Long.class));
-
         ResponseEntity<PersonEntity> response = personController.delete(id);
-
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

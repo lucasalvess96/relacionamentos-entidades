@@ -3,9 +3,9 @@ package com.lombok.praticas.estudos.student;
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.course.CourseRepository;
 import com.lombok.praticas.estudos.course.CourserEntity;
-import com.lombok.praticas.estudos.student.Dto.StudenCreateDto;
-import com.lombok.praticas.estudos.student.Dto.StudentListDto;
-import com.lombok.praticas.estudos.student.Dto.StudentSearchDto;
+import com.lombok.praticas.estudos.student.dto.StudenCreateDto;
+import com.lombok.praticas.estudos.student.dto.StudentListDto;
+import com.lombok.praticas.estudos.student.dto.StudentSearchDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.lombok.praticas.estudos.student.comum.convert.convertDtoToEntity;
-import static com.lombok.praticas.estudos.student.comum.convert.convertEntityToDto;
+import static com.lombok.praticas.estudos.student.comum.Convert.convertDtoToEntity;
+import static com.lombok.praticas.estudos.student.comum.Convert.convertEntityToDto;
 
 @Service
 public record StudentService(StudentRepository studentRepository, CourseRepository courseRepository) {
@@ -35,8 +34,7 @@ public record StudentService(StudentRepository studentRepository, CourseReposito
         List<StudentEntity> studentEntities = studentRepository.findAll();
         return studentEntities.stream()
                 .map(student -> new StudenCreateDto(student.getId(), student.getName(), student.getAge(),
-                        convertEntityToDto(student.getCourses())))
-                .collect(Collectors.toList());
+                        convertEntityToDto(student.getCourses()))).toList();
     }
 
     public Page<StudentListDto> studentPagination(Pageable pageable) {
@@ -77,8 +75,7 @@ public record StudentService(StudentRepository studentRepository, CourseReposito
     public List<StudentSearchDto> searchListStudent(String name) {
         List<StudentEntity> studentEntities = studentRepository.findByNameContainingIgnoreCase(name);
         return studentEntities.stream()
-                .map(studentEntity -> new StudentSearchDto(studentEntity.getName()))
-                .collect(Collectors.toList());
+                .map(studentEntity -> new StudentSearchDto(studentEntity.getName())).toList();
     }
 
     public void deletePerson(Long id) {

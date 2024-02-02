@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.patient;
 
-import com.lombok.praticas.estudos.patient.Dto.PatientDto;
-import com.lombok.praticas.estudos.patient.Dto.PatientSearchDto;
+import com.lombok.praticas.estudos.patient.dto.PatientDto;
+import com.lombok.praticas.estudos.patient.dto.PatientSearchDto;
 import com.lombok.praticas.estudos.patient.swagger.PatientSwagger;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
