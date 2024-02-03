@@ -28,8 +28,7 @@ public class BookController {
 
     @PostMapping("/create")
     public ResponseEntity<BookDto> create(@RequestBody @Valid BookDto bookDto) {
-        return ResponseEntity.created((URI.create("/create")))
-                .body(bookService.createBook(bookDto));
+        return ResponseEntity.created((URI.create("/create"))).body(bookService.createBook(bookDto));
     }
 
     @GetMapping("/list")
@@ -51,10 +50,8 @@ public class BookController {
     @GetMapping("/detail/{title}")
     public ResponseEntity<BookDto> detail(@PathVariable @Valid String title) {
         Optional<BookDto> companyDetailDto = bookService.detailBook(title);
-        return companyDetailDto.map(detailDto -> ResponseEntity.ok()
-                        .body(detailDto))
-                .orElseGet(() -> ResponseEntity.notFound()
-                        .build());
+        return companyDetailDto.map(detailDto -> ResponseEntity.ok().body(detailDto))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search/pagination")
@@ -71,7 +68,6 @@ public class BookController {
     @Transactional
     public ResponseEntity<PersonEntity> delete(@PathVariable String title) {
         bookService.deleteBook(title);
-        return ResponseEntity.noContent()
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }
