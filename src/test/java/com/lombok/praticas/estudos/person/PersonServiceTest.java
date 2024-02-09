@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -119,7 +121,7 @@ class PersonServiceTest {
             "3, Bob, 40, 55555555555",
             "4, Cris, 32, 01653212980",
     })
-    @DisplayName("Should create a person with real value")
+    @DisplayName("Should create a person with real value with different data")
     void testPersonCreate(Long id, String name, int age, String cpf) {
         PersonCreateDto personCreateDto = new PersonCreateDto(id, name, String.valueOf(age), cpf);
         PersonCreateDto result = personService.personCreate(personCreateDto);
@@ -160,7 +162,7 @@ class PersonServiceTest {
     @DisplayName("Should return list of PersonCreateDto")
     void testPersonList() {
         List<PersonEntity> personEntities = Arrays.asList(
-                new PersonEntity(1L, "John Doe", "30", "123456789"),
+                this.personEntity,
                 new PersonEntity(2L, "Jane Smith", "25", "987654321")
         );
         when(personRepositoryMock.findAll()).thenReturn(personEntities);
@@ -187,6 +189,31 @@ class PersonServiceTest {
     void testPersonListEmpty() {
         when(personRepositoryMock.findAll()).thenReturn(Collections.emptyList());
         List<PersonCreateDto> result = personServiceMock.personList();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Should return the List of a person with real data")
+    void listPersonRealData() {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                List<PersonCreateDto> result = personService.personList();
+                assertNotNull(result);
+                assertEquals(2, result.size());
+                assertEquals("John Doe", result.get(0).name());
+                assertEquals("Clean Code", result.get(1).name());
+            }
+        });
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Should return an empty list when no person are in the real database")
+    void listBookRealDataEmptyList() {
+        List<PersonCreateDto> result = personService.personList();
+        assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
