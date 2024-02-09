@@ -1,8 +1,8 @@
 package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
-import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +57,7 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should test person list pagination")
     void testPersonListPagination() {
-        List<PersonEntity> personEntities = Collections.singletonList(new PersonEntity(1L, "John Doe", "30", 
+        List<PersonEntity> personEntities = Collections.singletonList(new PersonEntity(1L, "John Doe", "30",
                 "123456789"));
         Page<PersonEntity> personEntityPage = new PageImpl<>(personEntities, pageable, 1);
         when(personRepository.findAll(pageable)).thenReturn(personEntityPage);

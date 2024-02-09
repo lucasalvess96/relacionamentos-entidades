@@ -1,8 +1,8 @@
 package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
-import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,7 +75,7 @@ class PersonControllerTest {
     @Test
     @DisplayName("Should test list method")
     void testList() {
-        List<PersonCreateDto> personList = Collections.singletonList(new PersonCreateDto(1L, "John Doe", "30", 
+        List<PersonCreateDto> personList = Collections.singletonList(new PersonCreateDto(1L, "John Doe", "30",
                 "123456789"));
         when(personService.personList()).thenReturn(personList);
         ResponseEntity<List<PersonCreateDto>> response = personController.list();

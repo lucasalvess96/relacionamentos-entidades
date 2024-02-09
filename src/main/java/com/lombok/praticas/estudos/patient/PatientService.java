@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PatientService {
@@ -33,9 +32,7 @@ public class PatientService {
 
     public List<PatientDto> patientList() {
         List<PatientEntity> patientEntityList = patientRepository.findAll();
-        return patientEntityList.stream()
-                .map(PatientDto::new)
-                .collect(Collectors.toList());
+        return patientEntityList.stream().map(PatientDto::new).toList();
     }
 
     public PatientDto patientUpdate(Long id, PatientDto patientDto) {
@@ -58,9 +55,7 @@ public class PatientService {
 
     public List<PatientSearchDto> searchListPerson(String name) {
         List<PatientEntity> patientEntityList = patientRepository.findByNameContainingIgnoreCase(name);
-        return patientEntityList.stream()
-                .map(patientEntity -> new PatientSearchDto(patientEntity.getName()))
-                .collect(Collectors.toList());
+        return patientEntityList.stream().map(patientEntity -> new PatientSearchDto(patientEntity.getName())).toList();
     }
 
     public void patientDelete(Long id) {

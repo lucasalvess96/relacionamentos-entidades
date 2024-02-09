@@ -1,8 +1,8 @@
 package com.lombok.praticas.estudos.person.comum;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
 import com.lombok.praticas.estudos.person.PersonRepository;
+import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
 
 public class ValidateCpfUser {
 

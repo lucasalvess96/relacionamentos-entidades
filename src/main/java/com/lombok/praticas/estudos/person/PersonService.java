@@ -1,10 +1,10 @@
 package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
-import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import com.lombok.praticas.estudos.person.comum.ValidateCpfUser;
 import com.lombok.praticas.estudos.person.comum.ValidateUser;
+import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

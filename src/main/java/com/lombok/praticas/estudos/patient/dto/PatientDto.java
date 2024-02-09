@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record PatientDto(
         @Schema(description = "id da pessoa", example = "1")
@@ -45,7 +44,6 @@ public record PatientDto(
     private static List<PatientConsultationDto> convertToPatientConsultationDtos(List<PatientConsultationEntity> patientConsultationList) {
         return patientConsultationList.stream()
                 .map(patientConsultation -> new PatientConsultationDto(patientConsultation.getId(),
-                        patientConsultation.getReason()))
-                .collect(Collectors.toList());
+                        patientConsultation.getReason())).toList();
     }
 }

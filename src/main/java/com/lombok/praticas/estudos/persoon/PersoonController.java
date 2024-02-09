@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.persoon;
 
-import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
 import com.lombok.praticas.estudos.person.PersonEntity;
+import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import com.lombok.praticas.estudos.persoon.dto.PersonDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

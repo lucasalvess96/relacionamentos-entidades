@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.person;
 
-import com.lombok.praticas.estudos.person.Dto.PersonCreateDto;
-import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

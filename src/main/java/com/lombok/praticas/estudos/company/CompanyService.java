@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.lombok.praticas.estudos.company.utils.Converter.convertDtoToEntity;
 
@@ -24,9 +23,7 @@ public record CompanyService(CompanyRepository companyRepository) {
 
     public List<CompanyDto> list() {
         List<Company> companyList = companyRepository.findAll();
-        return companyList.stream()
-                .map(CompanyDto::new)
-                .collect(Collectors.toList());
+        return companyList.stream().map(CompanyDto::new).toList();
     }
 
     public Page<CompanyDto> pagination(Pageable pageable) {
@@ -53,9 +50,7 @@ public record CompanyService(CompanyRepository companyRepository) {
 
     public List<CompanySearch> searchListPerson(String name) {
         List<Company> companyEntities = companyRepository.findByNameContainingIgnoreCase(name);
-        return companyEntities.stream()
-                .map(entity -> new CompanySearch(entity.getName()))
-                .collect(Collectors.toList());
+        return companyEntities.stream().map(entity -> new CompanySearch(entity.getName())).toList();
     }
 
     public void deleteCompany(Long id) {

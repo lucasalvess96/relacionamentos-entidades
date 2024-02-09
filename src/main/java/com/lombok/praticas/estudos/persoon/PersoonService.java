@@ -4,7 +4,7 @@ import com.lombok.praticas.estudos.address.AddressEntity;
 import com.lombok.praticas.estudos.address.AddressRepository;
 import com.lombok.praticas.estudos.address.dto.AddressDto;
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.person.Dto.PersonSearchDto;
+import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import com.lombok.praticas.estudos.persoon.dto.PersonDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
