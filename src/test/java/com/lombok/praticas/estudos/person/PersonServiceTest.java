@@ -63,9 +63,7 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should be creation of a personMock")
     void testPersonCreateMock() {
-        PersonCreateDto personCreateDto = this.personCreateDto;
-        PersonEntity savedPersonEntity = this.personEntity;
-        when(personRepositoryMock.save(any(PersonEntity.class))).thenReturn(savedPersonEntity);
+        when(personRepositoryMock.save(any(PersonEntity.class))).thenReturn(personEntity);
         PersonCreateDto result = personServiceMock.personCreate(personCreateDto);
         verify(personRepositoryMock, times(1)).save(any(PersonEntity.class));
         assertAll("result",
@@ -101,16 +99,16 @@ class PersonServiceTest {
     })
     @DisplayName("Should create a personMock with different data")
     void testPersonCreateMockWithDifferentData(Long id, String name, int age, String cpf) {
-        PersonCreateDto personCreateDto = new PersonCreateDto(id, name, String.valueOf(age), cpf);
-        PersonEntity personEntity = new PersonEntity(id, name, String.valueOf(age), cpf);
-        when(personRepositoryMock.save(any(PersonEntity.class))).thenReturn(personEntity);
-        PersonCreateDto result = personServiceMock.personCreate(personCreateDto);
+        PersonCreateDto personCreateDtoParametrized = new PersonCreateDto(id, name, String.valueOf(age), cpf);
+        PersonEntity personEntityParametrized = new PersonEntity(id, name, String.valueOf(age), cpf);
+        when(personRepositoryMock.save(any(PersonEntity.class))).thenReturn(personEntityParametrized);
+        PersonCreateDto result = personServiceMock.personCreate(personCreateDtoParametrized);
         assertAll("result",
                 () -> assertNotNull(result, "Result should not be null"),
-                () -> assertEquals(personCreateDto.id(), result.id(), "Ids should match"),
-                () -> assertEquals(personCreateDto.name(), result.name(), "Names should match"),
-                () -> assertEquals(personCreateDto.age(), result.age(), "Ages should match"),
-                () -> assertEquals(personCreateDto.cpf(), result.cpf(), "CPFs should match")
+                () -> assertEquals(personCreateDtoParametrized.id(), result.id(), "Ids should match"),
+                () -> assertEquals(personCreateDtoParametrized.name(), result.name(), "Names should match"),
+                () -> assertEquals(personCreateDtoParametrized.age(), result.age(), "Ages should match"),
+                () -> assertEquals(personCreateDtoParametrized.cpf(), result.cpf(), "CPFs should match")
         );
     }
 
@@ -123,27 +121,27 @@ class PersonServiceTest {
     })
     @DisplayName("Should create a person with real value with different data")
     void testPersonCreate(Long id, String name, int age, String cpf) {
-        PersonCreateDto personCreateDto = new PersonCreateDto(id, name, String.valueOf(age), cpf);
-        PersonCreateDto result = personService.personCreate(personCreateDto);
+        PersonCreateDto personCreateDtoParametrized = new PersonCreateDto(id, name, String.valueOf(age), cpf);
+        PersonCreateDto result = personService.personCreate(personCreateDtoParametrized);
         assertNotNull(result.id(), "Result ID should not be null");
         Optional<PersonEntity> savedPersonOptional = personRepository.findById(result.id());
         assertTrue(savedPersonOptional.isPresent(), "Saved person should exist in the database");
         PersonEntity savedPerson = savedPersonOptional.get();
         assertNotNull(savedPerson.getId(), "Saved person ID should not be null");
-        assertEquals(personCreateDto.name(), savedPerson.getName(), "Names should match");
-        assertEquals(personCreateDto.age(), savedPerson.getAge(), "Ages should match");
-        assertEquals(personCreateDto.cpf(), savedPerson.getCpf(), "CPFs should match");
+        assertEquals(personCreateDtoParametrized.name(), savedPerson.getName(), "Names should match");
+        assertEquals(personCreateDtoParametrized.age(), savedPerson.getAge(), "Ages should match");
+        assertEquals(personCreateDtoParametrized.cpf(), savedPerson.getCpf(), "CPFs should match");
     }
 
     @Test
     @DisplayName("Should test person list pagination")
     void testPersonListPagination() {
-        List<PersonEntity> personEntities = Collections.singletonList(new PersonEntity(1L, "John Doe", "30",
-                "123456789"));
-        Page<PersonEntity> personEntityPage = new PageImpl<>(personEntities, pageable, 1);
+        long TOTAL_ITEMS_IN_THE_LIST = 1L;
+        List<PersonEntity> personEntities = Collections.singletonList(personEntity);
+        Page<PersonEntity> personEntityPage = new PageImpl<>(personEntities, pageable, TOTAL_ITEMS_IN_THE_LIST);
         when(personRepositoryMock.findAll(pageable)).thenReturn(personEntityPage);
         Page<PersonCreateDto> result = personServiceMock.personListPagination(pageable);
-        assertEquals(1, result.getContent().size());
+        assertEquals(TOTAL_ITEMS_IN_THE_LIST, result.getContent().size());
         assertEquals("John Doe", result.getContent().get(0).name());
     }
 
@@ -221,8 +219,6 @@ class PersonServiceTest {
     @DisplayName("Should update a person")
     void testPersonUpdate() {
         Long id = 1L;
-        PersonCreateDto personCreateDto = new PersonCreateDto(id, "John Doe", "30", "12345678912");
-        PersonEntity personEntity = new PersonEntity();
         personEntity.setId(id);
         personEntity.setName("John Doe atualizado");
         personEntity.setAge("34");
@@ -242,7 +238,6 @@ class PersonServiceTest {
     @DisplayName("Should throw an exception when the ID is not found")
     void testPersonUpdateNotFound() {
         Long id = 1L;
-        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
         when(personRepositoryMock.findById(id)).thenReturn(Optional.empty());
         assertThrows(ErroRequest.class, () -> personServiceMock.personUpdate(id, personCreateDto));
     }
@@ -251,7 +246,6 @@ class PersonServiceTest {
     @DisplayName("Should return PersonCreateDto object for a valid ID")
     void testDetailPersonWithValidId() {
         Long id = 1L;
-        PersonEntity personEntity = new PersonEntity(1L, "John Doe", "30", "123456789");
         Optional<PersonEntity> optionalPersonEntity = Optional.of(personEntity);
         when(personRepositoryMock.findById(id)).thenReturn(optionalPersonEntity);
         Optional<PersonCreateDto> result = personServiceMock.detailPerson(id);
@@ -273,15 +267,14 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should search person pagination")
     void testSearchPersonPagination() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageableSearch = Pageable.unpaged();
         String name = "John";
-        PersonEntity personEntity = new PersonEntity();
         personEntity.setId(1L);
         personEntity.setName("John Doe");
         Page<PersonEntity> personEntityPage = new PageImpl<>(Collections.singletonList(personEntity));
         when(personRepositoryMock.findByNameContainingIgnoreCase(any(String.class), any(Pageable.class)))
                 .thenReturn(personEntityPage);
-        Page<PersonSearchDto> result = personServiceMock.searchPersonPagination(name, pageable);
+        Page<PersonSearchDto> result = personServiceMock.searchPersonPagination(name, pageableSearch);
         assertEquals(1, result.getContent().size());
         assertEquals("John Doe", result.getContent().get(0).name());
     }
@@ -289,11 +282,11 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should not find search result")
     void testSearchPersonNotFound() {
-        Pageable pageable = Pageable.unpaged();
+        Pageable pageableNotFound = Pageable.unpaged();
         String name = "Jane";
         when(personRepositoryMock.findByNameContainingIgnoreCase(any(String.class), any(Pageable.class)))
                 .thenReturn(Page.empty());
-        Page<PersonSearchDto> result = personServiceMock.searchPersonPagination(name, pageable);
+        Page<PersonSearchDto> result = personServiceMock.searchPersonPagination(name, pageableNotFound);
         assertEquals(0, result.getContent().size());
     }
 
@@ -301,7 +294,6 @@ class PersonServiceTest {
     @DisplayName("Should search list of persons")
     void testSearchListPerson() {
         String name = "John";
-        PersonEntity personEntity = new PersonEntity();
         personEntity.setId(1L);
         personEntity.setName("John Doe");
         List<PersonEntity> personEntities = Collections.singletonList(personEntity);
@@ -334,5 +326,14 @@ class PersonServiceTest {
         Long id = 2L;
         when(personRepositoryMock.existsById(id)).thenReturn(false);
         assertThrows(ErroRequest.class, () -> personServiceMock.deletePerson(id));
+    }
+
+    @Test
+    @DisplayName("Should throw NullPointerException when person is null")
+    void testGetPersonCreateDtoObjectThrowsNullPointerException() {
+        PersonCreateDto personCreateDtoII = new PersonCreateDto(1L, "John Doe", "30", "123456789");
+        NullPointerException exception = assertThrows(NullPointerException.class,
+                () -> personService.getPersonCreateDtoObject(personCreateDtoII, null));
+        assertEquals("PersonEntity cannot be null", exception.getMessage());
     }
 }

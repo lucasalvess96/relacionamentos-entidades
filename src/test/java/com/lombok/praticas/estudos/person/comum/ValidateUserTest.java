@@ -9,6 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +21,31 @@ class ValidateUserTest {
 
     @Mock
     private PersonRepository personRepository;
+
+    @Test
+    @DisplayName("Should throw UnsupportedOperationException when instantiating ValidateUser")
+    void testConstructor() {
+        Constructor<ValidateUser> constructor = null;
+        try {
+            constructor = ValidateUser.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            fail("Failed to find the constructor: " + e.getMessage());
+        }
+        try {
+            if (constructor != null) {
+                constructor.newInstance();
+                fail("Expected UnsupportedOperationException was not thrown");
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            fail("Failed to instantiate ValidateUser: " + e.getMessage());
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof UnsupportedOperationException) {
+                return;
+            }
+            fail("Expected UnsupportedOperationException was not thrown");
+        }
+    }
 
     @Test
     @DisplayName("should validate whether the person exists")
