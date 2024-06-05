@@ -1,173 +1,194 @@
 package com.lombok.praticas.estudos.person;
 
-import com.lombok.praticas.estudos.comun.ErroRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
 import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
+@WebMvcTest(PersonController.class)
 class PersonControllerTest {
 
-    @Mock
-    Pageable pageable;
+    @MockBean
+    PersonService personServiceMock;
 
-    @Mock
-    private PersonService personService;
+    @Autowired
+    MockMvc mockMvc;
 
-    @InjectMocks
-    private PersonController personController;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @Test
-    @DisplayName("Should return created person")
-    void testPersonCreate() {
-        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789081");
-        PersonCreateDto savedPersonCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789081");
-        when(personService.personCreate(any(PersonCreateDto.class))).thenReturn(savedPersonCreateDto);
-        ResponseEntity<PersonCreateDto> response = personController.create(personCreateDto);
-        assertNotNull(response);
-        assertEquals(201, response.getStatusCode().value());
-        assertNotNull(response.getHeaders().getLocation());
-        assertEquals("/create/1", response.getHeaders().getLocation().getPath());
-        assertEquals(savedPersonCreateDto, response.getBody());
+    private PersonCreateDto personCreateDto;
+
+    private List<PersonCreateDto> persons;
+
+    private PersonSearchDto person;
+
+    private PersonSearchDto personII;
+
+    @BeforeEach
+    void setUp() {
+        personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678951");
+        persons = List.of(
+                new PersonCreateDto(1L, "John Doe", "30", "12345678951"),
+                new PersonCreateDto(2L, "Jane Doe", "28", "12345678952")
+        );
+        person = new PersonSearchDto("John Doe");
+        personII = new PersonSearchDto("Jane Doe");
     }
 
     @Test
-    @DisplayName("Should test list method pagination")
-    void testPersonListPaginated() {
-        Pageable pageable = Pageable.unpaged();
-        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "123456789");
-        Page<PersonCreateDto> personCreateDtoPage = new PageImpl<>(Collections.singletonList(personCreateDto));
-        when(personService.personListPagination(pageable)).thenReturn(personCreateDtoPage);
-        ResponseEntity<Page<PersonCreateDto>> response = personController.list(pageable);
-        assertEquals(personCreateDtoPage, response.getBody());
+    @DisplayName("Should create a new person successfully")
+    void createPerson() throws Exception {
+        PersonCreateDto savedPerson = new PersonCreateDto(2L, "John Doe", "30", "12345678951");
+        when(personServiceMock.personCreate(any(PersonCreateDto.class))).thenReturn(savedPerson);
+        mockMvc.perform(post("/person/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(personCreateDto)))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/person/create/" + savedPerson.id()))
+                .andExpect(jsonPath("$.id").value(savedPerson.id()))
+                .andExpect(jsonPath("$.name").value(savedPerson.name()))
+                .andExpect(jsonPath("$.age").value(savedPerson.age()))
+                .andExpect(jsonPath("$.cpf").value(savedPerson.cpf()));
     }
 
     @Test
-    @DisplayName("Should test list method with empty pagination")
-    void testListWithEmptyPagination() {
-        Page<PersonCreateDto> emptyPage = new PageImpl<>(Collections.emptyList());
-        when(personService.personListPagination(pageable)).thenReturn(emptyPage);
-        ResponseEntity<Page<PersonCreateDto>> response = personController.list(pageable);
-        assertEquals(emptyPage, response.getBody());
+    @DisplayName("Should return paginated list of persons")
+    void listPersonsPagination() throws Exception {
+        Page<PersonCreateDto> page = new PageImpl<>(persons);
+        when(personServiceMock.personListPagination(any(Pageable.class))).thenReturn(page);
+        mockMvc.perform(get("/person/pagination")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "id,asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].id").value(persons.get(0).id()))
+                .andExpect(jsonPath("$.content[0].name").value(persons.get(0).name()))
+                .andExpect(jsonPath("$.content[0].age").value(persons.get(0).age()))
+                .andExpect(jsonPath("$.content[0].cpf").value(persons.get(0).cpf()))
+                .andExpect(jsonPath("$.content[1].id").value(persons.get(1).id()))
+                .andExpect(jsonPath("$.content[1].name").value(persons.get(1).name()))
+                .andExpect(jsonPath("$.content[1].age").value(persons.get(1).age()))
+                .andExpect(jsonPath("$.content[1].cpf").value(persons.get(1).cpf()));
     }
 
     @Test
-    @DisplayName("Should test list method")
-    void testList() {
-        List<PersonCreateDto> personList = Collections.singletonList(new PersonCreateDto(1L, "John Doe", "30",
-                "123456789"));
-        when(personService.personList()).thenReturn(personList);
-        ResponseEntity<List<PersonCreateDto>> response = personController.list();
-        assertEquals(personList, response.getBody());
+    @DisplayName("Should return list of persons")
+    void listPersons() throws Exception {
+        when(personServiceMock.personList()).thenReturn(persons);
+        mockMvc.perform(get("/person/list")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(persons.get(0).id()))
+                .andExpect(jsonPath("$[0].name").value(persons.get(0).name()))
+                .andExpect(jsonPath("$[0].age").value(persons.get(0).age()))
+                .andExpect(jsonPath("$[0].cpf").value(persons.get(0).cpf()))
+                .andExpect(jsonPath("$[1].id").value(persons.get(1).id()))
+                .andExpect(jsonPath("$[1].name").value(persons.get(1).name()))
+                .andExpect(jsonPath("$[1].age").value(persons.get(1).age()))
+                .andExpect(jsonPath("$[1].cpf").value(persons.get(1).cpf()));
     }
 
     @Test
-    @DisplayName("Should test list method with empty list")
-    void testListEmpty() {
-        List<PersonCreateDto> personList = Collections.emptyList();
-        when(personService.personList()).thenReturn(personList);
-        ResponseEntity<List<PersonCreateDto>> response = personController.list();
-        assertEquals(personList, response.getBody());
+    @DisplayName("Should update a person successfully")
+    void updatePersonSuccess() throws Exception {
+        when(personServiceMock.personUpdate(eq(1L), any(PersonCreateDto.class))).thenReturn(personCreateDto);
+        mockMvc.perform(put("/person/update/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(personCreateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(personCreateDto.id()))
+                .andExpect(jsonPath("$.name").value(personCreateDto.name()))
+                .andExpect(jsonPath("$.age").value(personCreateDto.age()))
+                .andExpect(jsonPath("$.cpf").value(personCreateDto.cpf()));
     }
 
     @Test
-    @DisplayName("Should update person information with valid ID")
-    void testUpdatePersonWithValidId() {
-        Long id = 1L;
-        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
-        when(personService.personUpdate(any(Long.class), any(PersonCreateDto.class))).thenReturn(personCreateDto);
-        ResponseEntity<PersonCreateDto> response = personController.update(id, personCreateDto);
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(personCreateDto.name(), Objects.requireNonNull(response.getBody()).name());
-        assertEquals(personCreateDto.age(), response.getBody().age());
-        assertEquals(personCreateDto.cpf(), response.getBody().cpf());
+    @DisplayName("Should return person details successfully")
+    void detailPersonSuccess() throws Exception {
+        when(personServiceMock.detailPerson(1L)).thenReturn(Optional.of(personCreateDto));
+        mockMvc.perform(get("/person/detail/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(personCreateDto.id()))
+                .andExpect(jsonPath("$.name").value(personCreateDto.name()))
+                .andExpect(jsonPath("$.age").value(personCreateDto.age()))
+                .andExpect(jsonPath("$.cpf").value(personCreateDto.cpf()));
     }
 
     @Test
-    @DisplayName("Should throw exception when ID is not found")
-    void testUpdatePersonWithInvalidId() {
-        Long id = 1L;
-        PersonCreateDto personCreateDto = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
-        when(personService.personUpdate(any(Long.class), any(PersonCreateDto.class)))
-                .thenThrow(new ErroRequest("ID não encontrado"));
-        assertThrows(ErroRequest.class, () -> personController.update(id, personCreateDto));
+    @DisplayName("Should return 404 when person not found")
+    void detailPersonNotFound() throws Exception {
+        when(personServiceMock.detailPerson(1L)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/person/detail/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return 200 OK with valid ID")
-    void testDetailWithValidId() {
-        Long id = 1L;
-        PersonCreateDto personDetail = new PersonCreateDto(1L, "John Doe", "30", "12345678912");
-        when(personService.detailPerson(id)).thenReturn(Optional.of(personDetail));
-        ResponseEntity<PersonCreateDto> response = personController.detail(id);
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(personDetail, response.getBody());
-    }
-
-    @Test
-    @DisplayName("Should return 404 Not Found with invalid ID")
-    void testDetailWithInvalidId() {
-        Long id = 2L;
-        when(personService.detailPerson(id)).thenReturn(Optional.empty());
-        ResponseEntity<PersonCreateDto> response = personController.detail(id);
-        assertEquals(404, response.getStatusCode().value());
-    }
-
-    @Test
-    @DisplayName("Should return paginated search results")
-    void testPagedSearch() {
-        String name = "John";
+    @DisplayName("Should return a paginated list of persons")
+    void pagedSearchSuccess() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
-        PersonSearchDto personSearchDto = new PersonSearchDto("John Doe");
-        List<PersonSearchDto> personSearchDtos = Collections.singletonList(personSearchDto);
-        Page<PersonSearchDto> personSearchDtoPage = new PageImpl<>(personSearchDtos);
-        when(personService.searchPersonPagination(any(String.class), any(Pageable.class))).thenReturn(personSearchDtoPage);
-        ResponseEntity<Page<PersonSearchDto>> response = personController.pagedSearch(name, pageable);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(response.getBody()).getContent().size());
-        assertEquals("John Doe", response.getBody().getContent().get(0).name());
+        Page<PersonSearchDto> personPage = new PageImpl<>(List.of(person, personII), pageable, 2);
+        when(personServiceMock.searchPersonPagination(eq("Doe"), any(Pageable.class))).thenReturn(personPage);
+        mockMvc.perform(get("/person/search/pagination")
+                        .param("name", "Doe")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].name").value(personPage.getContent().get(0).name()))
+                .andExpect(jsonPath("$.content[1].name").value(personPage.getContent().get(1).name()));
     }
 
     @Test
-    @DisplayName("Should return list search results")
-    void testSearchList() {
-        String name = "John";
-        PersonSearchDto personSearchDto = new PersonSearchDto("John Doe");
-        List<PersonSearchDto> personSearchDtos = Collections.singletonList(personSearchDto);
-        when(personService.searchListPerson(any(String.class))).thenReturn(personSearchDtos);
-        ResponseEntity<List<PersonSearchDto>> response = personController.searchList(name);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
-        assertEquals("John Doe", response.getBody().get(0).name());
+    @DisplayName("Should return a list of persons")
+    void testSearchListSuccess() throws Exception {
+        when(personServiceMock.searchListPerson("Doe")).thenReturn(List.of(person, personII));
+        mockMvc.perform(get("/person/search/list")
+                        .param("name", "Doe")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].name").value("John Doe"))
+                .andExpect(jsonPath("$[1].name").value("Jane Doe"));
     }
 
     @Test
-    @DisplayName("Should delete person with valid ID")
-    void testDeletePersonWithValidId() {
+    @DisplayName("Should delete a person successfully")
+    void testDeletePerson() throws Exception {
         Long id = 1L;
-        doNothing().when(personService).deletePerson(any(Long.class));
-        ResponseEntity<PersonEntity> response = personController.delete(id);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        mockMvc.perform(delete("/person/delete/{id}", id))
+                .andExpect(status().isNoContent());
+        verify(personServiceMock, times(1)).deletePerson(id);
     }
 }

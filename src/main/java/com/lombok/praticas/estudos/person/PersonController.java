@@ -31,7 +31,7 @@ public class PersonController implements Personswagger {
     @Override
     public ResponseEntity<PersonCreateDto> create(@RequestBody @Valid PersonCreateDto personCreateDto) {
         PersonCreateDto createDto = personService.personCreate(personCreateDto);
-        return ResponseEntity.created(URI.create("/create/" + createDto.id())).body(createDto);
+        return ResponseEntity.created(URI.create("/person/create/" + createDto.id())).body(createDto);
     }
 
     @GetMapping("/pagination")
