@@ -1,7 +1,6 @@
 package com.lombok.praticas.estudos.persoon;
 
-import com.lombok.praticas.estudos.address.AddressEntity;
-import com.lombok.praticas.estudos.address.AddressRepository;
+import com.lombok.praticas.estudos.address.AddressService;
 import com.lombok.praticas.estudos.address.dto.AddressDto;
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
@@ -14,7 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public record PersoonService(PersoonRepository persoonRepository, AddressRepository addressRepository) {
+public class PersoonService {
+    
+    private final PersoonRepository persoonRepository;
+
+    private final AddressService addressService;
+
+    public PersoonService(PersoonRepository personRepository, AddressService addressService) {
+        this.persoonRepository = personRepository;
+        this.addressService = addressService;
+    }
 
     public PersonDto personCreate(PersonDto dto) {
         Person person = new Person();
@@ -64,19 +72,10 @@ public record PersoonService(PersoonRepository persoonRepository, AddressReposit
     private PersonDto getPersonCreateDtoAndUpdateDto(PersonDto personCreateDto, Person personEntity) {
         personEntity.setName(personCreateDto.name());
         personEntity.setCpf(personCreateDto.cpf());
+
         AddressDto addressDto = personCreateDto.addressDto();
-        AddressEntity addressEntity = personEntity.getAddress();
-        if (addressEntity == null) {
-            addressEntity = new AddressEntity();
-            personEntity.setAddress(addressEntity);
-        }
-        if (addressDto != null) {
-            addressEntity.setId(addressDto.id());
-            addressEntity.setStreet(addressDto.street());
-            addressEntity.setNumber(addressDto.number());
-            addressEntity.setCity(addressDto.city());
-        }
-        personEntity.setAddress(addressRepository.save(addressEntity));
+
+        personEntity.setAddress(addressService.saveAddress(addressDto));
         return new PersonDto(persoonRepository.save(personEntity));
     }
 }
