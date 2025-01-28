@@ -1,8 +1,8 @@
-package com.lombok.praticas.estudos.persoon;
+package com.lombok.praticas.estudos.onetoone.persoon;
 
+import com.lombok.praticas.estudos.onetoone.persoon.dto.PersonDto;
 import com.lombok.praticas.estudos.person.PersonEntity;
 import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
-import com.lombok.praticas.estudos.persoon.dto.PersonDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

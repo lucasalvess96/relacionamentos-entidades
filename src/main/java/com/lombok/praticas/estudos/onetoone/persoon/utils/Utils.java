@@ -1,7 +1,7 @@
-package com.lombok.praticas.estudos.persoon.utils;
+package com.lombok.praticas.estudos.onetoone.persoon.utils;
 
-import com.lombok.praticas.estudos.address.AddressEntity;
-import com.lombok.praticas.estudos.address.dto.AddressDto;
+import com.lombok.praticas.estudos.onetoone.address.AddressEntity;
+import com.lombok.praticas.estudos.onetoone.address.dto.AddressDto;
 
 public class Utils {
 

@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.persoon;
+package com.lombok.praticas.estudos.onetoone.persoon;
 
-import com.lombok.praticas.estudos.address.AddressEntity;
+import com.lombok.praticas.estudos.onetoone.address.AddressEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

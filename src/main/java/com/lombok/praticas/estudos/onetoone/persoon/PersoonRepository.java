@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.persoon;
+package com.lombok.praticas.estudos.onetoone.persoon;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

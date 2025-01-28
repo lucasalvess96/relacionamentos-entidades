@@ -1,9 +1,9 @@
-package com.lombok.praticas.estudos.persoon.dto;
+package com.lombok.praticas.estudos.onetoone.persoon.dto;
 
-import com.lombok.praticas.estudos.address.dto.AddressDto;
-import com.lombok.praticas.estudos.persoon.Person;
+import com.lombok.praticas.estudos.onetoone.address.dto.AddressDto;
+import com.lombok.praticas.estudos.onetoone.persoon.Person;
 
-import static com.lombok.praticas.estudos.persoon.utils.Utils.convertEntityToDtoAddress;
+import static com.lombok.praticas.estudos.onetoone.persoon.utils.Utils.convertEntityToDtoAddress;
 
 public record PersonDto(Long id, String name, String cpf, AddressDto addressDto) {
 

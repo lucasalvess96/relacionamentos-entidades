@@ -1,10 +1,10 @@
-package com.lombok.praticas.estudos.persoon;
+package com.lombok.praticas.estudos.onetoone.persoon;
 
-import com.lombok.praticas.estudos.address.AddressService;
-import com.lombok.praticas.estudos.address.dto.AddressDto;
 import com.lombok.praticas.estudos.comun.ErroRequest;
+import com.lombok.praticas.estudos.onetoone.address.AddressService;
+import com.lombok.praticas.estudos.onetoone.address.dto.AddressDto;
+import com.lombok.praticas.estudos.onetoone.persoon.dto.PersonDto;
 import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
-import com.lombok.praticas.estudos.persoon.dto.PersonDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 public class PersoonService {
-    
+
     private final PersoonRepository persoonRepository;
 
     private final AddressService addressService;

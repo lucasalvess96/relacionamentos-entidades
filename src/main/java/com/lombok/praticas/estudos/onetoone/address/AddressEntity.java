@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.address;
+package com.lombok.praticas.estudos.onetoone.address;
 
-import com.lombok.praticas.estudos.persoon.Person;
+import com.lombok.praticas.estudos.onetoone.persoon.Person;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +20,11 @@ public class AddressEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private Long id;
+
     private String street;
+
     private Long number;
+
     private String city;
 
     @OneToOne(mappedBy = "address")
@@ -33,7 +36,8 @@ public class AddressEntity {
         if (!(o instanceof AddressEntity that)) return false;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getStreet(), that.getStreet())
                 && Objects.equals(getNumber(), that.getNumber()) && Objects.equals(getCity(),
-                that.getCity()) && Objects.equals(getPerson(), that.getPerson());
+                                                                                   that.getCity()
+        ) && Objects.equals(getPerson(), that.getPerson());
     }
 
     @Override

@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.address;
+package com.lombok.praticas.estudos.onetoone.address;
 
-import com.lombok.praticas.estudos.address.dto.AddressDto;
+import com.lombok.praticas.estudos.onetoone.address.dto.AddressDto;
 import org.springframework.stereotype.Service;
 
 @Service
