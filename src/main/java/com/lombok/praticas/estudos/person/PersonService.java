@@ -33,8 +33,7 @@ public record PersonService(PersonRepository personRepository) {
     }
 
     public PersonCreateDto personUpdate(Long id, PersonCreateDto personCreateDto) {
-        PersonEntity personEntity = personRepository.findById(id)
-                .orElseThrow(() -> new ErroRequest("ID não encontrado"));
+        PersonEntity personEntity = personRepository.findById(id).orElseThrow(() -> new ErroRequest("ID não encontrado"));
         return getPersonCreateDtoObject(personCreateDto, personEntity);
     }
 
@@ -51,22 +50,15 @@ public record PersonService(PersonRepository personRepository) {
 
     public List<PersonSearchDto> searchListPerson(String name) {
         List<PersonEntity> personEntities = personRepository.findByNameContainingIgnoreCase(name);
-        return personEntities.stream()
-                .map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
+        return personEntities.stream().map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
     }
 
     public void deletePerson(Long id) {
-        if (personRepository.existsById(id)) {
-            personRepository.deleteById(id);
-        } else {
-            throw new ErroRequest("Recurso não encontrado");
-        }
+        personRepository.findById(id).orElseThrow(() -> new ErroRequest("Recurso não encontrado"));
+        personRepository.deleteById(id);
     }
 
     public PersonCreateDto getPersonCreateDtoObject(PersonCreateDto personCreateDto, PersonEntity person) {
-        if (person == null) {
-            throw new NullPointerException("PersonEntity cannot be null");
-        }
         person.setName(personCreateDto.name());
         person.setAge(personCreateDto.age());
         person.setCpf(personCreateDto.cpf());

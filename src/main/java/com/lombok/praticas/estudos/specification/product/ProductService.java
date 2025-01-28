@@ -42,7 +42,6 @@ public class ProductService {
         Specification<Product> specification = Specification.where(getProduct(productFilter))
                 .and(getNameProduct(productFilter))
                 .and(getPriceProduct(productFilter));
-        return productRepository.findAll(specification, pageable)
-                .map(ProductConverte::toProductDto);
+        return productRepository.findAll(specification, pageable).map(ProductConverte::toProductDto);
     }
 }

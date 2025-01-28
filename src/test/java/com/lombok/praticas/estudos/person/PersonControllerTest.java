@@ -63,8 +63,8 @@ class PersonControllerTest {
         PersonCreateDto savedPerson = new PersonCreateDto(2L, "John Doe", "30", "12345678951");
         when(personServiceMock.personCreate(any(PersonCreateDto.class))).thenReturn(savedPerson);
         mockMvc.perform(post("/person/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(personCreateDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(personCreateDto)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/person/create/" + savedPerson.id()))
                 .andExpect(jsonPath("$.id").value(savedPerson.id()))
@@ -79,10 +79,10 @@ class PersonControllerTest {
         Page<PersonCreateDto> page = new PageImpl<>(persons);
         when(personServiceMock.personListPagination(any(Pageable.class))).thenReturn(page);
         mockMvc.perform(get("/person/pagination")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "0")
-                        .param("size", "10")
-                        .param("sort", "id,asc"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .param("page", "0")
+                                .param("size", "10")
+                                .param("sort", "id,asc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].id").value(persons.get(0).id()))
@@ -100,7 +100,7 @@ class PersonControllerTest {
     void listPersons() throws Exception {
         when(personServiceMock.personList()).thenReturn(persons);
         mockMvc.perform(get("/person/list")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].id").value(persons.get(0).id()))
@@ -118,8 +118,8 @@ class PersonControllerTest {
     void updatePersonSuccess() throws Exception {
         when(personServiceMock.personUpdate(eq(1L), any(PersonCreateDto.class))).thenReturn(personCreateDto);
         mockMvc.perform(put("/person/update/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(personCreateDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(personCreateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(personCreateDto.id()))
                 .andExpect(jsonPath("$.name").value(personCreateDto.name()))
@@ -132,7 +132,7 @@ class PersonControllerTest {
     void detailPersonSuccess() throws Exception {
         when(personServiceMock.detailPerson(1L)).thenReturn(Optional.of(personCreateDto));
         mockMvc.perform(get("/person/detail/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(personCreateDto.id()))
                 .andExpect(jsonPath("$.name").value(personCreateDto.name()))
@@ -145,7 +145,7 @@ class PersonControllerTest {
     void detailPersonNotFound() throws Exception {
         when(personServiceMock.detailPerson(1L)).thenReturn(Optional.empty());
         mockMvc.perform(get("/person/detail/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
@@ -156,10 +156,10 @@ class PersonControllerTest {
         Page<PersonSearchDto> personPage = new PageImpl<>(List.of(person, personII), pageable, 2);
         when(personServiceMock.searchPersonPagination(eq("Doe"), any(Pageable.class))).thenReturn(personPage);
         mockMvc.perform(get("/person/search/pagination")
-                        .param("name", "Doe")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .param("name", "Doe")
+                                .param("page", "0")
+                                .param("size", "10")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].name").value(personPage.getContent().get(0).name()))
@@ -171,8 +171,8 @@ class PersonControllerTest {
     void testSearchListSuccess() throws Exception {
         when(personServiceMock.searchListPerson("Doe")).thenReturn(List.of(person, personII));
         mockMvc.perform(get("/person/search/list")
-                        .param("name", "Doe")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .param("name", "Doe")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(2)))
