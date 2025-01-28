@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.author;
+package com.lombok.praticas.estudos.manytoone.author;
 
-import com.lombok.praticas.estudos.post.PostEntity;
+import com.lombok.praticas.estudos.manytoone.post.PostEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.author;
+package com.lombok.praticas.estudos.manytoone.author;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

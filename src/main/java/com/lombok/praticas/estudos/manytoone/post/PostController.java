@@ -1,7 +1,7 @@
-package com.lombok.praticas.estudos.post;
+package com.lombok.praticas.estudos.manytoone.post;
 
-import com.lombok.praticas.estudos.post.dto.PostDto;
-import com.lombok.praticas.estudos.post.dto.PostSearchDto;
+import com.lombok.praticas.estudos.manytoone.post.dto.PostDto;
+import com.lombok.praticas.estudos.manytoone.post.dto.PostSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

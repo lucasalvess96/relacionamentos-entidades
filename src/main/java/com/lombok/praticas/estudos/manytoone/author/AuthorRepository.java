@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.author;
+package com.lombok.praticas.estudos.manytoone.author;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.post;
+package com.lombok.praticas.estudos.manytoone.post;
 
-import com.lombok.praticas.estudos.author.AuthorEntity;
+import com.lombok.praticas.estudos.manytoone.author.AuthorEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +20,8 @@ public class PostEntity {
 
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private AuthorEntity authorEntity;
 
     @Override

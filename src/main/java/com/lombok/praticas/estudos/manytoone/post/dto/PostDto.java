@@ -1,8 +1,8 @@
-package com.lombok.praticas.estudos.post.dto;
+package com.lombok.praticas.estudos.manytoone.post.dto;
 
-import com.lombok.praticas.estudos.author.AuthorDto;
-import com.lombok.praticas.estudos.author.AuthorEntity;
-import com.lombok.praticas.estudos.post.PostEntity;
+import com.lombok.praticas.estudos.manytoone.author.AuthorDto;
+import com.lombok.praticas.estudos.manytoone.author.AuthorEntity;
+import com.lombok.praticas.estudos.manytoone.post.PostEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
