@@ -1,11 +1,11 @@
-package com.lombok.praticas.estudos.student;
+package com.lombok.praticas.estudos.manytomany.student;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.course.CourseRepository;
-import com.lombok.praticas.estudos.course.CourserEntity;
-import com.lombok.praticas.estudos.student.dto.StudenCreateDto;
-import com.lombok.praticas.estudos.student.dto.StudentListDto;
-import com.lombok.praticas.estudos.student.dto.StudentSearchDto;
+import com.lombok.praticas.estudos.manytomany.course.CourseRepository;
+import com.lombok.praticas.estudos.manytomany.course.CourserEntity;
+import com.lombok.praticas.estudos.manytomany.student.dto.StudenCreateDto;
+import com.lombok.praticas.estudos.manytomany.student.dto.StudentListDto;
+import com.lombok.praticas.estudos.manytomany.student.dto.StudentSearchDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.lombok.praticas.estudos.student.comum.Convert.convertDtoToEntity;
-import static com.lombok.praticas.estudos.student.comum.Convert.convertEntityToDto;
+import static com.lombok.praticas.estudos.manytomany.student.comum.Convert.convertDtoToEntity;
+import static com.lombok.praticas.estudos.manytomany.student.comum.Convert.convertEntityToDto;
 
 @Service
 public record StudentService(StudentRepository studentRepository, CourseRepository courseRepository) {
@@ -34,13 +34,15 @@ public record StudentService(StudentRepository studentRepository, CourseReposito
         List<StudentEntity> studentEntities = studentRepository.findAll();
         return studentEntities.stream()
                 .map(student -> new StudenCreateDto(student.getId(), student.getName(), student.getAge(),
-                        convertEntityToDto(student.getCourses()))).toList();
+                                                    convertEntityToDto(student.getCourses())
+                )).toList();
     }
 
     public Page<StudentListDto> studentPagination(Pageable pageable) {
         Page<StudentEntity> studentEntityPage = studentRepository.findAll(pageable);
         return studentEntityPage.map(student -> new StudentListDto(student.getId(), student.getName(),
-                student.getAge(), convertEntityToDto(student.getCourses())));
+                                                                   student.getAge(), convertEntityToDto(student.getCourses())
+        ));
     }
 
     public StudenCreateDto updateStudent(Long id, StudenCreateDto studenDto) {

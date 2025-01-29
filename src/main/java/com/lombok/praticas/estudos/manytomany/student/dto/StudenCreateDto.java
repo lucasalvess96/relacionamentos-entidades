@@ -1,11 +1,11 @@
-package com.lombok.praticas.estudos.student.dto;
+package com.lombok.praticas.estudos.manytomany.student.dto;
 
-import com.lombok.praticas.estudos.course.dto.CourseCreateDto;
-import com.lombok.praticas.estudos.student.StudentEntity;
+import com.lombok.praticas.estudos.manytomany.course.dto.CourseCreateDto;
+import com.lombok.praticas.estudos.manytomany.student.StudentEntity;
 
 import java.util.Set;
 
-import static com.lombok.praticas.estudos.student.comum.Convert.convertEntityToDto;
+import static com.lombok.praticas.estudos.manytomany.student.comum.Convert.convertEntityToDto;
 
 public record StudenCreateDto(Long id, String name, String age, Set<CourseCreateDto> courseCreateDto) {
 

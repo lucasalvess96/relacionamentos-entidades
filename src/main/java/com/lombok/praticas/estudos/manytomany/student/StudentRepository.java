@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.student;
+package com.lombok.praticas.estudos.manytomany.student;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

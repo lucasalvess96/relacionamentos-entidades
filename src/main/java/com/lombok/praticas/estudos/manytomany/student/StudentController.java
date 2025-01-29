@@ -1,8 +1,8 @@
-package com.lombok.praticas.estudos.student;
+package com.lombok.praticas.estudos.manytomany.student;
 
-import com.lombok.praticas.estudos.student.dto.StudenCreateDto;
-import com.lombok.praticas.estudos.student.dto.StudentListDto;
-import com.lombok.praticas.estudos.student.dto.StudentSearchDto;
+import com.lombok.praticas.estudos.manytomany.student.dto.StudenCreateDto;
+import com.lombok.praticas.estudos.manytomany.student.dto.StudentListDto;
+import com.lombok.praticas.estudos.manytomany.student.dto.StudentSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,22 +28,18 @@ public class StudentController {
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<StudenCreateDto> create(@RequestBody @Valid StudenCreateDto createDto) {
-        StudenCreateDto studenCreateDto = studentService.studenCreate(createDto);
-        return ResponseEntity.created(URI.create("/create" + createDto.id()))
-                .body(studenCreateDto);
+        return ResponseEntity.created(URI.create("/create" + createDto.id())).body(studentService.studenCreate(createDto));
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<StudenCreateDto>> list() {
-        return ResponseEntity.ok()
-                .body(studentService.studentList());
+        return ResponseEntity.ok().body(studentService.studentList());
     }
 
     @GetMapping("/pagination")
     public ResponseEntity<Page<StudentListDto>> pagination(@PageableDefault(direction = Sort.Direction.DESC)
                                                            Pageable pageable) {
-        return ResponseEntity.ok()
-                .body(studentService.studentPagination(pageable));
+        return ResponseEntity.ok().body(studentService.studentPagination(pageable));
     }
 
     @PutMapping("/update/{id}")
@@ -51,8 +47,7 @@ public class StudentController {
     public ResponseEntity<StudenCreateDto> update(@PathVariable Long id,
                                                   @RequestBody @Valid StudenCreateDto studenCreateDto) {
         StudenCreateDto studentUpdate = studentService.updateStudent(id, studenCreateDto);
-        return ResponseEntity.ok()
-                .body(studentUpdate);
+        return ResponseEntity.ok().body(studentUpdate);
     }
 
     @GetMapping("/detail/{id}")
@@ -67,21 +62,18 @@ public class StudentController {
     @GetMapping("/search/pagination")
     public ResponseEntity<Page<StudentSearchDto>> pagedSearch(@RequestParam String name, Pageable pageable) {
         Page<StudentSearchDto> studentSearchDtos = studentService.searchStudentPagination(name, pageable);
-        return ResponseEntity.ok()
-                .body(studentSearchDtos);
+        return ResponseEntity.ok().body(studentSearchDtos);
     }
 
     @GetMapping("/search/list")
     public ResponseEntity<List<StudentSearchDto>> searchList(@RequestParam String name) {
         List<StudentSearchDto> personSearchDtos = studentService.searchListStudent(name);
-        return ResponseEntity.ok()
-                .body(personSearchDtos);
+        return ResponseEntity.ok().body(personSearchDtos);
     }
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<StudentEntity> delete(@PathVariable Long id) {
         studentService.deletePerson(id);
-        return ResponseEntity.noContent()
-                .build();
+        return ResponseEntity.noContent().build();
     }
 }

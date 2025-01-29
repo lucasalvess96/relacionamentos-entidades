@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.course;
+package com.lombok.praticas.estudos.manytomany.course;
 
-import com.lombok.praticas.estudos.student.StudentEntity;
+import com.lombok.praticas.estudos.manytomany.student.StudentEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package com.lombok.praticas.estudos.student.comum;
+package com.lombok.praticas.estudos.manytomany.student.comum;
 
-import com.lombok.praticas.estudos.course.CourserEntity;
-import com.lombok.praticas.estudos.course.dto.CourseCreateDto;
+import com.lombok.praticas.estudos.manytomany.course.CourserEntity;
+import com.lombok.praticas.estudos.manytomany.course.dto.CourseCreateDto;
 
 import java.util.Set;
 import java.util.stream.Collectors;
