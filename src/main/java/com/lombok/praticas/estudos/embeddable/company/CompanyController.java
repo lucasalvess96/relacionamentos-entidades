@@ -1,7 +1,7 @@
-package com.lombok.praticas.estudos.company;
+package com.lombok.praticas.estudos.embeddable.company;
 
-import com.lombok.praticas.estudos.company.dto.CompanyDto;
-import com.lombok.praticas.estudos.company.dto.CompanySearch;
+import com.lombok.praticas.estudos.embeddable.company.dto.CompanyDto;
+import com.lombok.praticas.estudos.embeddable.company.dto.CompanySearch;
 import com.lombok.praticas.estudos.person.PersonEntity;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -22,7 +22,9 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    public CompanyController(CompanyService companyService) {this.companyService = companyService;}
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @PostMapping("/create")
     @Transactional

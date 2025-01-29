@@ -1,7 +1,7 @@
-package com.lombok.praticas.estudos.company.utils;
+package com.lombok.praticas.estudos.embeddable.company.utils;
 
-import com.lombok.praticas.estudos.contactperson.ContactPersonDto;
-import com.lombok.praticas.estudos.contactperson.ContactPersonEntity;
+import com.lombok.praticas.estudos.embeddable.contactperson.ContactPersonDto;
+import com.lombok.praticas.estudos.embeddable.contactperson.ContactPersonEntity;
 
 public class Converter {
 

@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.company;
+package com.lombok.praticas.estudos.embeddable.company;
 
-import com.lombok.praticas.estudos.contactperson.ContactPersonEntity;
+import com.lombok.praticas.estudos.embeddable.contactperson.ContactPersonEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

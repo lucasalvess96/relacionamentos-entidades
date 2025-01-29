@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.contactperson;
+package com.lombok.praticas.estudos.embeddable.contactperson;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

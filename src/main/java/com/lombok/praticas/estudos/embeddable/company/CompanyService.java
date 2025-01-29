@@ -1,9 +1,9 @@
-package com.lombok.praticas.estudos.company;
+package com.lombok.praticas.estudos.embeddable.company;
 
-import com.lombok.praticas.estudos.company.dto.CompanyDto;
-import com.lombok.praticas.estudos.company.dto.CompanySearch;
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.contactperson.ContactPersonEntity;
+import com.lombok.praticas.estudos.embeddable.company.dto.CompanyDto;
+import com.lombok.praticas.estudos.embeddable.company.dto.CompanySearch;
+import com.lombok.praticas.estudos.embeddable.contactperson.ContactPersonEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lombok.praticas.estudos.company.utils.Converter.convertDtoToEntity;
+import static com.lombok.praticas.estudos.embeddable.company.utils.Converter.convertDtoToEntity;
 
 @Service
 public record CompanyService(CompanyRepository companyRepository) {
@@ -32,8 +32,7 @@ public record CompanyService(CompanyRepository companyRepository) {
     }
 
     public CompanyDto update(Long id, CompanyDto companyDto) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new ErroRequest("informação não encontrada"));
+        Company company = companyRepository.findById(id).orElseThrow(() -> new ErroRequest("informação não encontrada"));
         return getCompanyCreateDtoAndUpdateDto(company, companyDto);
     }
 
