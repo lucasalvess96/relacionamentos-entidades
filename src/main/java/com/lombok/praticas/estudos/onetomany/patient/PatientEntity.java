@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.patient;
+package com.lombok.praticas.estudos.onetomany.patient;
 
-import com.lombok.praticas.estudos.patientconsultation.PatientConsultationEntity;
+import com.lombok.praticas.estudos.onetomany.patientconsultation.PatientConsultationEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

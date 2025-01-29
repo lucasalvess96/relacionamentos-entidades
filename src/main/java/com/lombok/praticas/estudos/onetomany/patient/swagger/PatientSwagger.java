@@ -1,9 +1,9 @@
-package com.lombok.praticas.estudos.patient.swagger;
+package com.lombok.praticas.estudos.onetomany.patient.swagger;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.patient.dto.PatientDto;
-import com.lombok.praticas.estudos.patient.dto.PatientSearchDto;
-import com.lombok.praticas.estudos.patient.PatientEntity;
+import com.lombok.praticas.estudos.onetomany.patient.PatientEntity;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientDto;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientSearchDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

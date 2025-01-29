@@ -1,9 +1,9 @@
-package com.lombok.praticas.estudos.patient;
+package com.lombok.praticas.estudos.onetomany.patient;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.patient.dto.PatientDto;
-import com.lombok.praticas.estudos.patient.dto.PatientSearchDto;
-import com.lombok.praticas.estudos.patientconsultation.PatientConsultationEntity;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientDto;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientSearchDto;
+import com.lombok.praticas.estudos.onetomany.patientconsultation.PatientConsultationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -73,15 +73,15 @@ public class PatientService {
         List<PatientConsultationEntity> patientConsultationList = patientEntity.getPatientConsultationList();
         if (patientDto.patientConsultationDto() != null) {
             patientConsultationList.addAll(patientDto.patientConsultationDto()
-                    .stream()
-                    .map(dto -> {
-                        PatientConsultationEntity patientConsultation = new PatientConsultationEntity();
-                        patientConsultation.setId(dto.id());
-                        patientConsultation.setReason(dto.reason());
-                        patientConsultation.setPatient(patientEntity);
-                        return patientConsultation;
-                    })
-                    .toList());
+                                                   .stream()
+                                                   .map(dto -> {
+                                                       PatientConsultationEntity patientConsultation = new PatientConsultationEntity();
+                                                       patientConsultation.setId(dto.id());
+                                                       patientConsultation.setReason(dto.reason());
+                                                       patientConsultation.setPatient(patientEntity);
+                                                       return patientConsultation;
+                                                   })
+                                                   .toList());
         }
         return new PatientDto(patientRepository.save(patientEntity));
     }

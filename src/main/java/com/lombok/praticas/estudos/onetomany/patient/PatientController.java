@@ -1,8 +1,8 @@
-package com.lombok.praticas.estudos.patient;
+package com.lombok.praticas.estudos.onetomany.patient;
 
-import com.lombok.praticas.estudos.patient.dto.PatientDto;
-import com.lombok.praticas.estudos.patient.dto.PatientSearchDto;
-import com.lombok.praticas.estudos.patient.swagger.PatientSwagger;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientDto;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientSearchDto;
+import com.lombok.praticas.estudos.onetomany.patient.swagger.PatientSwagger;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

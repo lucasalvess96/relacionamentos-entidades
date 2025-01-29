@@ -1,7 +1,7 @@
 package com.lombok.praticas.estudos.person;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.patient.dto.PatientDto;
+import com.lombok.praticas.estudos.onetomany.patient.dto.PatientDto;
 import com.lombok.praticas.estudos.person.dtoo.PersonCreateDto;
 import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import io.swagger.v3.oas.annotations.Operation;

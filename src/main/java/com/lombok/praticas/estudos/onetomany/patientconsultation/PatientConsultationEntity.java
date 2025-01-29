@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.patientconsultation;
+package com.lombok.praticas.estudos.onetomany.patientconsultation;
 
-import com.lombok.praticas.estudos.patient.PatientEntity;
+import com.lombok.praticas.estudos.onetomany.patient.PatientEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
