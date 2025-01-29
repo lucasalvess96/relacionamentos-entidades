@@ -52,10 +52,8 @@ public class CompanyController {
     @GetMapping("/detail/{id}")
     public ResponseEntity<CompanyDto> detail(@PathVariable @Valid Long id) {
         Optional<CompanyDto> companyDetailDto = companyService.companyDetail(id);
-        return companyDetailDto.map(detailDto -> ResponseEntity.ok()
-                        .body(detailDto))
-                .orElseGet(() -> ResponseEntity.notFound()
-                        .build());
+        return companyDetailDto.map(detailDto -> ResponseEntity.ok().body(detailDto))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search/pagination")
@@ -71,8 +69,6 @@ public class CompanyController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<PersonEntity> delete(@PathVariable Long id) {
         companyService.deleteCompany(id);
-        return ResponseEntity.noContent()
-                .build();
+        return ResponseEntity.noContent().build();
     }
-
 }

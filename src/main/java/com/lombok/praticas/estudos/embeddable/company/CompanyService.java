@@ -3,7 +3,6 @@ package com.lombok.praticas.estudos.embeddable.company;
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.embeddable.company.dto.CompanyDto;
 import com.lombok.praticas.estudos.embeddable.company.dto.CompanySearch;
-import com.lombok.praticas.estudos.embeddable.contactperson.ContactPersonEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -64,8 +63,7 @@ public record CompanyService(CompanyRepository companyRepository) {
         company.setName(companyDto.name());
         company.setAddress(companyDto.address());
         company.setPhone(companyDto.phone());
-        ContactPersonEntity contactPersonEntity = convertDtoToEntity(companyDto.contactPersonDto());
-        company.setContactPerson(contactPersonEntity);
+        company.setContactPerson(convertDtoToEntity(companyDto.contactPersonDto()));
         companyRepository.save(company);
         return new CompanyDto(company);
     }
