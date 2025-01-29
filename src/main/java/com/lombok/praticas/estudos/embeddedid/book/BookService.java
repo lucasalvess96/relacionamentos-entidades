@@ -1,8 +1,8 @@
-package com.lombok.praticas.estudos.book;
+package com.lombok.praticas.estudos.embeddedid.book;
 
-import com.lombok.praticas.estudos.book.dto.BookDto;
-import com.lombok.praticas.estudos.book.dto.BookSearch;
 import com.lombok.praticas.estudos.comun.ErroRequest;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookDto;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lombok.praticas.estudos.book.utils.Converter.convertBookIdfromDto;
+import static com.lombok.praticas.estudos.embeddedid.book.utils.Converter.convertBookIdfromDto;
 
 @Service
 public class BookService {

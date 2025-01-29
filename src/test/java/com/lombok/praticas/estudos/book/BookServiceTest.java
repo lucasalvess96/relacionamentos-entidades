@@ -1,9 +1,12 @@
 package com.lombok.praticas.estudos.book;
 
-import com.lombok.praticas.estudos.book.dto.BookDto;
-import com.lombok.praticas.estudos.book.dto.BookSearch;
-import com.lombok.praticas.estudos.bookid.BookId;
 import com.lombok.praticas.estudos.comun.ErroRequest;
+import com.lombok.praticas.estudos.embeddedid.book.BookEntity;
+import com.lombok.praticas.estudos.embeddedid.book.BookRepository;
+import com.lombok.praticas.estudos.embeddedid.book.BookService;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookDto;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookSearch;
+import com.lombok.praticas.estudos.embeddedid.bookid.BookId;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -103,8 +106,7 @@ class BookServiceTest {
     @DisplayName("Should return the creation of a book with real data (parametrized)")
     @Transactional
     void createBookRealDataParametrized(String name, String genero, String title, String language) {
-        BookDto bookDto = new BookDto(name, genero, title, language);
-        bookService.createBook(bookDto);
+        bookService.createBook(new BookDto(name, genero, title, language));
         List<BookEntity> savedBooks = bookRepository.findAll();
         assertNotNull(savedBooks);
         assertEquals(1, savedBooks.size());
@@ -226,7 +228,9 @@ class BookServiceTest {
         when(bookRepositoryMock.findById(1L)).thenReturn(Optional.of(existingBookEntity));
         when(bookRepositoryMock.save(any(BookEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
         BookDto updatedBookDto = bookServiceMock.updateBook(1L, new BookDto("Updated Book", "New Genre", "New " +
-                "Title", "New Language"));
+                                                                    "Title", "New Language"
+                                                            )
+        );
         verify(bookRepositoryMock, times(1)).findById(1L);
         verify(bookRepositoryMock, times(1)).save(any(BookEntity.class));
         assertNotNull(updatedBookDto);
@@ -241,7 +245,8 @@ class BookServiceTest {
     void updateBookNotFoundMock() {
         when(bookRepositoryMock.findById(1L)).thenReturn(Optional.empty());
         ErroRequest erroRequest = assertThrows(ErroRequest.class, () ->
-                bookServiceMock.updateBook(1L, this.bookDto));
+                bookServiceMock.updateBook(1L, this.bookDto)
+        );
         assertEquals("informação não encontrada", erroRequest.getMessage());
         verify(bookRepositoryMock).findById(1L);
         verify(bookRepositoryMock, never()).save(any(BookEntity.class));
@@ -268,8 +273,7 @@ class BookServiceTest {
     @Test
     @DisplayName("Should return the book details when found")
     void detailBookRealDataSuccess() {
-        BookEntity bookEntity = new BookEntity(new BookId("Java 101", "Java"), "Java 101", "Tecnologia");
-        bookRepository.save(bookEntity);
+        bookRepository.save(new BookEntity(new BookId("Java 101", "Java"), "Java 101", "Tecnologia"));
         Optional<BookDto> result = bookService.detailBook("Java 101");
         assertTrue(result.isPresent());
         assertEquals("Java 101", result.get().name());

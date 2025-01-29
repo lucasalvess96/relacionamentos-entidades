@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.bookid;
+package com.lombok.praticas.estudos.embeddedid.bookid;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

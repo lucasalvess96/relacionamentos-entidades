@@ -1,9 +1,11 @@
 package com.lombok.praticas.estudos.book;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lombok.praticas.estudos.book.dto.BookDto;
-import com.lombok.praticas.estudos.book.dto.BookSearch;
 import com.lombok.praticas.estudos.comun.ErroRequest;
+import com.lombok.praticas.estudos.embeddedid.book.BookController;
+import com.lombok.praticas.estudos.embeddedid.book.BookService;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookDto;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookSearch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,7 +62,7 @@ class BookControllerTest {
     void create() throws Exception {
         when(bookService.createBook(any(BookDto.class))).thenReturn(responseDto);
         mockMvc.perform(post("/book/create").contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                                .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Java 101"))
                 .andExpect(jsonPath("$.genero").value("Tecnologia"))
@@ -73,7 +75,7 @@ class BookControllerTest {
     void createBookWithMissingData() throws Exception {
         BookDto requestDtoWithMissingData = new BookDto("Java 101", null, "Prog", "Java");
         mockMvc.perform(post("/book/create").contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDtoWithMissingData)))
+                                .content(new ObjectMapper().writeValueAsString(requestDtoWithMissingData)))
                 .andExpect(status().isCreated());// isBadRequest()
     }
 
@@ -82,7 +84,7 @@ class BookControllerTest {
     void createBookWithInvalidData() throws Exception {
         BookDto requestDtoWithInvalidData = new BookDto("", "Tecnologia", "Prog", "Java");
         mockMvc.perform(post("/book/create").contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDtoWithInvalidData)))
+                                .content(new ObjectMapper().writeValueAsString(requestDtoWithInvalidData)))
                 .andExpect(status().isCreated()); //isBadRequest
     }
 
@@ -142,8 +144,8 @@ class BookControllerTest {
     void updateBook() throws Exception {
         when(bookService.updateBook(any(Long.class), any(BookDto.class))).thenReturn(responseDto);
         mockMvc.perform(put("/book/update/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Java 101"))
                 .andExpect(jsonPath("$.genero").value("Tecnologia"))
@@ -157,8 +159,8 @@ class BookControllerTest {
         when(bookService.updateBook(any(Long.class), any(BookDto.class)))
                 .thenThrow(new ErroRequest("Informação não encontrada"));
         mockMvc.perform(put("/book/update/{id}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Informação não encontrada"));
     }
@@ -189,8 +191,8 @@ class BookControllerTest {
         when(bookService.searchBookPagination(any(String.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(new BookSearch("java jpa"))));
         mockMvc.perform(get("/book/search/pagination")
-                        .param("name", "java")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .param("name", "java")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].name").value("java jpa"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(1));
@@ -202,8 +204,8 @@ class BookControllerTest {
         when(bookService.searchBookPagination(any(String.class), any(Pageable.class)))
                 .thenReturn(Page.empty());
         mockMvc.perform(get("/book/search/pagination")
-                        .param("name", "nonexistent")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .param("name", "nonexistent")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").isEmpty())
@@ -216,8 +218,8 @@ class BookControllerTest {
         when(bookService.searchListBook(any(String.class)))
                 .thenReturn(Collections.singletonList(new BookSearch("java jpa")));
         mockMvc.perform(get("/book/search/list")
-                        .param("name", "java")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .param("name", "java")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -226,8 +228,8 @@ class BookControllerTest {
     void testSearchWithoutPaginationWithNoResults() throws Exception {
         when(bookService.searchListBook(any(String.class))).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/book/search/list")
-                        .param("name", "nonexistent")
-                        .contentType(MediaType.APPLICATION_JSON))
+                                .param("name", "nonexistent")
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 

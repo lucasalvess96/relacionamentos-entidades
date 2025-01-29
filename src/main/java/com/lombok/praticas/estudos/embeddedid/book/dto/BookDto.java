@@ -1,6 +1,6 @@
-package com.lombok.praticas.estudos.book.dto;
+package com.lombok.praticas.estudos.embeddedid.book.dto;
 
-import com.lombok.praticas.estudos.book.BookEntity;
+import com.lombok.praticas.estudos.embeddedid.book.BookEntity;
 
 public record BookDto(String name, String genero, String title, String language) {
 

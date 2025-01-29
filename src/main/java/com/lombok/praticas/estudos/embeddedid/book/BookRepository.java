@@ -1,4 +1,4 @@
-package com.lombok.praticas.estudos.book;
+package com.lombok.praticas.estudos.embeddedid.book;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

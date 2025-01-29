@@ -1,7 +1,7 @@
-package com.lombok.praticas.estudos.book.utils;
+package com.lombok.praticas.estudos.embeddedid.book.utils;
 
-import com.lombok.praticas.estudos.book.dto.BookDto;
-import com.lombok.praticas.estudos.bookid.BookId;
+import com.lombok.praticas.estudos.embeddedid.book.dto.BookDto;
+import com.lombok.praticas.estudos.embeddedid.bookid.BookId;
 
 public final class Converter {
 
