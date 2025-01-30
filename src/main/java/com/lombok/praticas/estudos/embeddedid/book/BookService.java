@@ -37,8 +37,7 @@ public class BookService {
     }
 
     public BookDto updateBook(Long id, BookDto bookDto) {
-        BookEntity bookEntity = bookRepository.findById(id)
-                .orElseThrow(() -> new ErroRequest("informação não encontrada"));
+        BookEntity bookEntity = bookRepository.findById(id).orElseThrow(() -> new ErroRequest("informação não encontrada"));
         return getCreateAndUpdateBook(bookEntity, bookDto);
     }
 

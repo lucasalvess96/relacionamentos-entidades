@@ -2,6 +2,7 @@ package com.lombok.praticas.estudos.manytomany.student;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
 import com.lombok.praticas.estudos.manytomany.course.CourseRepository;
+import com.lombok.praticas.estudos.manytomany.course.CourseService;
 import com.lombok.praticas.estudos.manytomany.course.CourserEntity;
 import com.lombok.praticas.estudos.manytomany.student.dto.StudenCreateDto;
 import com.lombok.praticas.estudos.manytomany.student.dto.StudentListDto;
@@ -18,24 +19,20 @@ import static com.lombok.praticas.estudos.manytomany.student.comum.Convert.conve
 import static com.lombok.praticas.estudos.manytomany.student.comum.Convert.convertEntityToDto;
 
 @Service
-public record StudentService(StudentRepository studentRepository, CourseRepository courseRepository) {
+public record StudentService(StudentRepository studentRepository, CourseRepository courseRepository,
+                             CourseService courseService) {
 
     public StudenCreateDto studenCreate(StudenCreateDto studenCreateDto) {
-        Set<CourserEntity> courses = convertDtoToEntity(studenCreateDto.courseCreateDto());
-        courseRepository.saveAll(courses);
         StudentEntity student = new StudentEntity();
         student.setName(studenCreateDto.name());
         student.setAge(studenCreateDto.age());
-        student.setCourses(courses);
+        student.setCourses(courseService.saveCourse(studenCreateDto.courseCreateDto()));
         return new StudenCreateDto(studentRepository.save(student));
     }
 
     public List<StudenCreateDto> studentList() {
         List<StudentEntity> studentEntities = studentRepository.findAll();
-        return studentEntities.stream()
-                .map(student -> new StudenCreateDto(student.getId(), student.getName(), student.getAge(),
-                                                    convertEntityToDto(student.getCourses())
-                )).toList();
+        return studentEntities.stream().map(StudenCreateDto::new).toList();
     }
 
     public Page<StudentListDto> studentPagination(Pageable pageable) {

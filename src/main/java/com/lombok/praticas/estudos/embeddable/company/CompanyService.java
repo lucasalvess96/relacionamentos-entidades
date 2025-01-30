@@ -52,11 +52,8 @@ public record CompanyService(CompanyRepository companyRepository) {
     }
 
     public void deleteCompany(Long id) {
-        if (companyRepository.existsById(id)) {
-            companyRepository.deleteById(id);
-        } else {
-            throw new ErroRequest("Recurso não encontrado");
-        }
+        companyRepository.findById(id).orElseThrow(() -> new ErroRequest("Recurso não encontrado"));
+        companyRepository.deleteById(id);
     }
 
     private CompanyDto getCompanyCreateDtoAndUpdateDto(Company company, CompanyDto companyDto) {
