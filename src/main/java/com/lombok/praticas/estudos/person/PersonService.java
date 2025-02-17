@@ -23,13 +23,11 @@ public record PersonService(PersonRepository personRepository) {
     }
 
     public Page<PersonCreateDto> personListPagination(Pageable pageable) {
-        Page<PersonEntity> personEntityPage = personRepository.findAll(pageable);
-        return personEntityPage.map(PersonCreateDto::new);
+        return personRepository.findAll(pageable).map(PersonCreateDto::new);
     }
 
     public List<PersonCreateDto> personList() {
-        List<PersonEntity> personEntities = personRepository.findAll();
-        return personEntities.stream().map(PersonCreateDto::new).toList();
+        return personRepository.findAll().stream().map(PersonCreateDto::new).toList();
     }
 
     public PersonCreateDto personUpdate(Long id, PersonCreateDto personCreateDto) {
@@ -38,19 +36,18 @@ public record PersonService(PersonRepository personRepository) {
     }
 
     public Optional<PersonCreateDto> detailPerson(Long id) {
-        Optional<PersonEntity> personEntity = personRepository.findById(id);
-        return personEntity.map(entity -> Optional.of(new PersonCreateDto(entity)))
-                .orElseThrow(() -> new ErroRequest("Usuário não encontrado"));
+        return Optional.ofNullable(personRepository.findById(id).map(PersonCreateDto::new)
+                                           .orElseThrow(() -> new ErroRequest("Usuário não encontrado")));
     }
 
     public Page<PersonSearchDto> searchPersonPagination(String name, Pageable pageable) {
-        Page<PersonEntity> personEntityPage = personRepository.findByNameContainingIgnoreCase(name, pageable);
-        return personEntityPage.map(personEntity -> new PersonSearchDto(personEntity.getName()));
+        return personRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(personEntity -> new PersonSearchDto(personEntity.getName()));
     }
 
     public List<PersonSearchDto> searchListPerson(String name) {
-        List<PersonEntity> personEntities = personRepository.findByNameContainingIgnoreCase(name);
-        return personEntities.stream().map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
+        return personRepository.findByNameContainingIgnoreCase(name).stream()
+                .map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
     }
 
     public void deletePerson(Long id) {
