@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("person")
@@ -57,9 +56,7 @@ public class PersonController implements Personswagger {
     @GetMapping("/detail/{id}")
     @Override
     public ResponseEntity<PersonCreateDto> detail(@PathVariable @Valid Long id) {
-        Optional<PersonCreateDto> personDetailDto = personService.detailPerson(id);
-        return personDetailDto.map(detailDto -> ResponseEntity.ok().body(detailDto))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return personService.detailPerson(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search/pagination")
