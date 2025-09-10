@@ -57,7 +57,7 @@ public class PersonControllerIII {
     }
 
     @GetMapping("/search/pagination")
-    public ResponseEntity<Page<PersonSearchDto>> paginationSearch(@RequestParam String name, Pageable pageable) {
+    public ResponseEntity<Page<PersonSearchDto>> searchPagination(@RequestParam String name, Pageable pageable) {
         return ResponseEntity.ok(personserviceiii.searchPagination(name, pageable));
     }
 
