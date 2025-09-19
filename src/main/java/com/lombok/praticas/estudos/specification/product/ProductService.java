@@ -28,14 +28,19 @@ public class ProductService {
     }
 
     private Product toProduct(ProductDto productDto) {
-        Category category = new Category();
-        category.setNameCategory(productDto.name());
-        categoryRepository.save(category);
+        Category category = saveCategory(productDto);
         Product product = new Product();
         product.setName(productDto.name());
         product.setPrice(productDto.price());
         product.setCategory(category);
         return product;
+    }
+
+    private Category saveCategory(ProductDto productDto) {
+        Category category = new Category();
+        category.setNameCategory(productDto.name());
+        categoryRepository.save(category);
+        return category;
     }
 
     public Page<ProductDto> getAllProducts(ProductFilter productFilter, Pageable pageable) {
