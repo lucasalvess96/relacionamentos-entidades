@@ -1,7 +1,6 @@
 package com.lombok.praticas.estudos.personIII;
 
 import com.lombok.praticas.estudos.comun.ErroRequest;
-import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,14 +44,12 @@ public class Personserviceiii {
         return PersonConverter.toDto(person);
     }
 
-    public List<PersonSearchDto> searchList(String name) {
-        return personRepositoryIII.findByNameContainingIgnoreCase(name).stream()
-                .map(personEntity -> new PersonSearchDto(personEntity.getName())).toList();
+    public List<PersonDtoIII> searchList(String name) {
+        return personRepositoryIII.findByNameContainingIgnoreCase(name).stream().map(PersonConverter::toDto).toList();
     }
 
-    public Page<PersonSearchDto> searchPagination(String name, Pageable pageable) {
-        return personRepositoryIII.findByNameContainingIgnoreCase(name, pageable)
-                .map(personEntity -> new PersonSearchDto(personEntity.getName()));
+    public Page<PersonDtoIII> searchPagination(String name, Pageable pageable) {
+        return personRepositoryIII.findByNameContainingIgnoreCase(name, pageable).map(PersonConverter::toDto);
     }
 
     public void delete(Long id) {
