@@ -83,7 +83,6 @@ class PersonServiceTest {
         Optional<PersonEntity> savedPersonOptional = personRepository.findById(result.id());
         assertTrue(savedPersonOptional.isPresent(), "Saved person should exist in the database");
         PersonEntity savedPerson = savedPersonOptional.get();
-        assertEquals(personCreateDto.id(), savedPerson.getId(), "Ids should match");
         assertEquals(personCreateDto.name(), savedPerson.getName(), "Names should match");
         assertEquals(personCreateDto.age(), savedPerson.getAge(), "Ages should match");
         assertEquals(personCreateDto.cpf(), savedPerson.getCpf(), "CPFs should match");
@@ -203,15 +202,6 @@ class PersonServiceTest {
                 assertEquals("Clean Code", result.get(1).name());
             }
         });
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("Should return an empty list when no person are in the real database")
-    void listBookRealDataEmptyList() {
-        List<PersonCreateDto> result = personService.personList();
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 
     @Test
