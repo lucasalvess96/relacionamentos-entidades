@@ -1,6 +1,5 @@
 package com.lombok.praticas.estudos.personIII;
 
-import com.lombok.praticas.estudos.person.dtoo.PersonSearchDto;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -52,12 +51,12 @@ public class PersonControllerIII {
     }
 
     @GetMapping("/search/list")
-    public ResponseEntity<List<PersonSearchDto>> searchList(@RequestParam String name) {
+    public ResponseEntity<List<PersonDtoIII>> searchList(@RequestParam String name) {
         return ResponseEntity.ok(personserviceiii.searchList(name));
     }
 
     @GetMapping("/search/pagination")
-    public ResponseEntity<Page<PersonSearchDto>> searchPagination(@RequestParam String name, Pageable pageable) {
+    public ResponseEntity<Page<PersonDtoIII>> searchPagination(@RequestParam String name, Pageable pageable) {
         return ResponseEntity.ok(personserviceiii.searchPagination(name, pageable));
     }
 
