@@ -11,7 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "PERSON", schema = "CRUD_PERSON")
+@Table(name = "PERSON_V3", schema = "CRUD")
 public class PersonEntityIII {
 
     @Id
