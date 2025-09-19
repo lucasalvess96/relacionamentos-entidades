@@ -30,15 +30,14 @@ public class Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Person person)) return false;
-        return Objects.equals(getId(), person.getId()) && Objects.equals(getName(), person.getName())
-                && Objects.equals(getCpf(), person.getCpf()) && Objects.equals(getAddress(), person.getAddress());
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(id, person.id) && Objects.equals(name, person.name) && Objects.equals(cpf, person.cpf) && Objects.equals(address, person.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCpf(), getAddress());
+        return Objects.hash(id, name, cpf, address);
     }
 
     @Override
